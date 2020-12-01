@@ -13,9 +13,9 @@ class OrganisationAdmin(admin.ModelAdmin):
         "org_contact_employee",
         "org_phone",
     ) 
-    search_fields = ("inn",) 
+    search_fields = ("org_inn",) 
     list_filter = ("id", "org_state", "org_city") 
-
+    empty_value_display = "-пусто-"
 
 class ReglamentAdmin(admin.ModelAdmin):
     list_display = (
@@ -24,8 +24,9 @@ class ReglamentAdmin(admin.ModelAdmin):
         "reg_organisation",
         "reg_date",
     ) 
-    #search_fields = ("inn",) 
-    list_filter = ("id", "reg_number", "reg_date")
+    search_fields = ("reg_number", "reg_organisation__org_inn",) 
+    #list_filter = ("id", "reg_number", "reg_date")
+    empty_value_display = "-пусто-"
 
 admin.site.register(Organisation, OrganisationAdmin)
 admin.site.register(Reglament, ReglamentAdmin)

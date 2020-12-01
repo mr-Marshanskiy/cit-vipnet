@@ -42,7 +42,7 @@ class Organisation(models.Model):
     org_comment = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.id} | {self.org_inn} | {self.org_name}"
+        return f"{self.org_inn}"
 
 
 class Reglament(models.Model):
@@ -60,6 +60,9 @@ class Reglament(models.Model):
         #auto_now_add=True,
         verbose_name=u"Дата присоединения",
     )
+
+    def __str__(self):
+        return f"{self.reg_number}"
 '''
 class Event(models.Model): 
     reg_number = models.ForeignKey(
