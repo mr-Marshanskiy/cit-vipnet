@@ -1,3 +1,4 @@
+from turtle import mode
 from django.db import models
 from django.contrib.auth import get_user_model
 
@@ -63,40 +64,109 @@ class Reglament(models.Model):
 
     def __str__(self):
         return f"{self.reg_number}"
-'''
+
+
+class Distributor(models.Model):
+    org_name = models.CharField(
+        max_length=35,
+        verbose_name=u"Организация дистрибьютора"
+    )
+    address = models.CharField(
+        max_length=50,
+        verbose_name=u"Местоположение",
+        blank=True,
+        null=True,
+    )
+    def __str__(self):
+        return f"{self.org_name}"
+    
+
+class KeyDevice(models.Model):
+    type = models.CharField(
+        max_length=35,
+        verbose_name=u"Тип носителя"
+    )
+    def __str__(self):
+        return f"{self.type}"
+    
+
+class License(models.Model):
+    n_license = models.CharField(
+        max_length=20,
+        verbose_name=u"Номер акта П/П"
+    )
+    lic_date = models.DateField(
+        verbose_name=u"Дата акта",
+        blank=True,
+        null=True,
+    )
+    distrib_org = models.ForeignKey(
+        "Distributor",
+        on_delete=models.SET_NULL,
+        related_name="distruitors",
+        verbose_name=u"Распространитель",
+        blank=True,
+        null=True,
+    )
+    ammount = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=u"Количество лицензий", 
+    )
+
+    def __str__(self):
+        return f"{self.n_license}"
+
+
 class Event(models.Model): 
-    reg_number = models.ForeignKey(
+    organisation = models.ForeignKey(
         "Organisation",
         on_delete=models.CASCADE,
-        related_name="reg_numbers"
+        related_name="reg_numbers",
+        verbose_name=u"Организация",
     )
-    keys_number = models.IntegerField(),
-    keys_date = models.DateTimeField(
-        "keys date",
-        auto_now_add=True
+    keys_number = models.IntegerField(
+        blank=True,
+        null=True,
+        verbose_name=u"Рег. номер СКИ",
+    )
+    keys_date = models.DateField(
+        #auto_now_add=True,
+        verbose_name=u"Дата выдачи СКИ",
     )
     device_name = models.ForeignKey(
-        "Device",
+        "KeyDevice",
         on_delete=models.SET_NULL,
-        related_name="devices"
+        related_name="devices",
+        blank=True,
+        null=True,
+        verbose_name=u"СКИ записана на",
     )
     device_id = models.CharField(
         blank=True,
         null=True,
-        max_length=30
+        max_length=30,
+        verbose_name=u"Серийный номер устройства",
     )
-    dist_number = models.CharField(
+    license = models.ForeignKey(
+        "License",
+        on_delete=models.SET_NULL,
+        related_name="license",
         blank=True,
         null=True,
-        max_length=30
-    ) 
+        verbose_name=u"Акт П/П",
+    )
     comment = models.TextField(
         blank=True,
         null=True,
+        verbose_name=u"Примечание",
     )
-    author = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        related_name="authors"
+    vpn_number = models.CharField(
+        blank=True,
+        null=True,
+        max_length=10,
+        verbose_name=u"Номер VPN",
     )
-'''
+
+    class Meta:
+        ordering = ['id']

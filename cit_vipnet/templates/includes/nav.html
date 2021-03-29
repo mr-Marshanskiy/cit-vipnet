@@ -1,0 +1,14 @@
+<nav class="navbar navbar-light" style="background-color: #e3f2fd;">
+    <a class="navbar-brand" href="{% url 'index' %}">ViPNet <span style="color:red"><b>DataBase</b></span></a>
+    <nav class="my-2 my-md-0 mr-md-3">
+        {% if user.is_authenticated %}
+        <b>Пользователь: {{ user.username }} | </b>
+        <a class="p-2 text-dark" href="{% url 'index' %}">Новая запись</a>
+        <a class="p-2 text-dark" href="{% url 'index' %}">Изменить пароль</a>
+        <a class="p-2 text-dark" href="{% url 'index' %}">Выйти</a>
+        {% else %}
+        <a class="p-2 text-dark" href="{% url 'index' %}">Войти</a> |
+        <a class="p-2 text-dark" href="{% url 'index' %}">Регистрация</a>
+        {% endif %}
+    </nav>
+</nav> 

@@ -6,4 +6,5 @@ urlpatterns = [
     path("", include("events.urls")),
     # импорт правил из приложения admin
     path("admin/", admin.site.urls),
+    path('new/', include('creatings.urls')),
 ] 
