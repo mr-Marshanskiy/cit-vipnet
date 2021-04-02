@@ -5,7 +5,7 @@ from .models import (
 from datetime import datetime
 import csv
 
-filepath = r"E:\db4.csv"
+filepath = r"E:\db44.csv"
 filepath_write = r"E:\db5_new.csv"
 arr1 = []
 arr2 = []
@@ -14,7 +14,6 @@ dictionary = {}
 
 class Record:
     def __init__(self,arr):
-
         self.reg_number = arr[0]
         self.reg_date = arr[1]
         self.org_net = arr[2]
@@ -101,7 +100,7 @@ class Application:
         if last_rec.distr_ammount == "":
             last_rec.distr_ammount = prev_rec.distr_ammount
         if ((last_rec.keys_device_name == "") 
-            and (prev_rec.keys_device_name in ["USB", "usb", "Usb"])):
+            and (prev_rec.keys_device_name.lower() == "usb")):
             last_rec.keys_device_name = prev_rec.keys_device_name
             last_rec.keys_device_id = prev_rec.keys_device_id
             last_rec.keys_number = prev_rec.keys_number
@@ -201,31 +200,31 @@ def org_add(app):
             key_number = int(org_rec.keys_number)
         except ValueError:
             key_number = 0
-        if not Event.objects.filter(
+        #if not Event.objects.filter(
+        #    keys_number=key_number,
+        #    vpn_number=org_rec.org_vpn,
+        #).exists():
+        organisation = Organisation.objects.filter(
+            org_inn=org_rec.org_inn
+        )[0]
+        device =  KeyDevice.objects.filter(
+            type=org_rec.keys_device_name.lower()
+        )[0]
+        Event.objects.create(
+            organisation=organisation,
             keys_number=key_number,
+            keys_date=keys_date_convert,
+            device_name=device,
+            device_id=org_rec.keys_device_id,
+            license=License.objects.filter(
+                n_license=org_rec.dist_number
+            )[0],
+            comment=org_rec.advance_info,
             vpn_number=org_rec.org_vpn,
-        ).exists():
-            organisation = Organisation.objects.filter(
-                org_inn=org_rec.org_inn
-            )[0]
-            device =  KeyDevice.objects.filter(
-                type=org_rec.keys_device_name.lower()
-            )[0]
-            Event.objects.create(
-                organisation=organisation,
-                keys_number=key_number,
-                keys_date=keys_date_convert,
-                device_name=device,
-                device_id=org_rec.keys_device_id,
-                license=License.objects.filter(
-                    n_license=org_rec.dist_number
-                )[0],
-                comment=org_rec.advance_info,
-                vpn_number=org_rec.org_vpn,
-            )
+        )
 
 
-dbtable = create_dict()
-org_add(dbtable)
+#dbtable = create_dict()
+#org_add(dbtable)
 #reglament_add(dbtable)
     

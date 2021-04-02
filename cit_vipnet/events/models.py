@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class Organisation(models.Model):
-    org_inn = models.CharField(max_length=6, verbose_name=u"ИНН организации")
+    org_inn = models.CharField(max_length=10, verbose_name=u"ИНН организации")
     org_name = models.CharField(
         max_length=120,
         verbose_name=u"Название организации",
@@ -48,8 +48,10 @@ class Organisation(models.Model):
 
 class Reglament(models.Model):
     reg_number = models.CharField(
-        max_length=6,
-        verbose_name=u"Регистрационный номер"
+        max_length=8,
+        verbose_name=u"Регистрационный номер",
+        blank=True,
+        null=True,
     )
     reg_organisation = models.ForeignKey(
         "Organisation",
@@ -60,6 +62,8 @@ class Reglament(models.Model):
     reg_date = models.DateField(
         #auto_now_add=True,
         verbose_name=u"Дата присоединения",
+        blank=True,
+        null=True,
     )
 
     def __str__(self):
