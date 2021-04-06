@@ -1,5 +1,10 @@
+from django.db.models.fields import related
+from django.db.models.query import prefetch_related_objects
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Event, Organisation, Reglament
+from itertools import chain
+from django.db import connection
+
 
 def index(request):
 
@@ -19,16 +24,12 @@ def index(request):
 
 def events(request):
     
-
     page = Organisation.objects.all().prefetch_related(
         'reg_orgs',
         'reg_numbers'
-    )[:100]
+    )
     
-    page = Event.objects.all().select_related('organisation').prefetch_related(
-        'reg_numbers'
-    )[:100]
-
+    print(page.query)
     return render(
         request,
         'events.html',
@@ -37,3 +38,4 @@ def events(request):
         }
      )
 
+    
