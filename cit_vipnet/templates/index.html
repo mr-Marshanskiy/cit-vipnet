@@ -18,30 +18,38 @@ td {
     text-align: center;
 }
 </style>
-    <table border="1" style="width:100%"> 
-        <tr>
-            <th> Рег № </th>
-            <th> Дата Рег № </th>
-            <th> Инн </th>
-            <th> Рег № СКИ </th>
-            <th> Организация </th>
-            <th> VPN </th>
-            <th> Акт </th>
-            <th> Примечание </th>
-        </tr>
-        {% for post in page %}
-         {% for event in post.reg_numbers.all %}
-            <tr>
-                <td> {{ post.reg_orgs.last.reg_number}} </td>
-                <td> {{ post.reg_orgs.last.reg_date | date:"d.m.Y"}} </td>
-                <td> {{ post.org_inn }} </td>
-                <td> {{ post.org_name }} </td>
-                <td> {{ event.keys_number }} </td>
-                <td> {{ event.vpn_number }} </td>
-                <td> {{ event.license.n_license }} </td>
-                <td> {{ event.comment }} </td>
-            </tr>
+  <table border="1" style="width:100%"> 
+    <tr>
+      <th> Рег № </th>
+      <th> Дата Рег № </th>
+      <th> Инн </th>
+      <th> Организация </th>
+      <th> Рег № СКИ </th>
+      <th> VPN </th>
+      <th> Акт </th>
+      <th> Кол-во лицензий </th>
+      <th> Примечание </th>
+    </tr>
+    {% for event in page %}
+      <tr>
+        <td>
+        {% for reg in event.organisation.reg_orgs.all %} 
+          {{ reg.reg_number }} <br>
         {% endfor %}
+        </td>
+        <td>
+        {% for reg in event.organisation.reg_orgs.all %} 
+          {{ reg.reg_date| date:"d.m.Y" }} <br>
         {% endfor %}
+        </td>
+        <td> {{ event.organisation.org_inn }} </td>
+        <td> {{ event.organisation.org_name }} </td>
+        <td> {{ event.keys_number }} </td>
+        <td> {{ event.vpn_number }} </td>
+        <td> {{ event.license.n_license }} </td>
+        <td> {{ event.license.ammount }} </td>
+        <td> {{ event.comment }} </td>
+      </tr>
+    {% endfor %}
     </table>
 {% endblock %} 
