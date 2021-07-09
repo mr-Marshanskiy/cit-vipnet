@@ -1,0 +1,192 @@
+{% extends "includes/base.html" %}
+{% block title %} {{ org.org_name }} {% endblock %}
+{% block header %} {{ org.org_name }} {% endblock %}
+{% block content %} 
+<script>
+ $(document).ready(function(){
+    $('.spoiler_title').click(function(){ 
+        var spoiler = $(this).parent().parent().next();
+        if(spoiler.hasClass('spoiler_block') && spoiler.is(':visible')) {
+            spoiler.animate({padding: '0px auto'}).find('div').slideUp(300,function(){spoiler.hide()});
+        }else{
+           spoiler.show().find('td').animate({padding: '8px auto'}).find('div').slideDown(300);
+        }
+    });
+});
+</script>
+
+<style>
+    .wrap {
+        width: 1310px;/*фиксируем ширину обертки*/
+        margin: 0 auto;/*центрируем ее*/
+        display: flex;
+        flex-direction: row;
+    }
+    
+    .reg-block {
+        float: left; /*Задаем обтекание*/
+        width: 320px; /*Фиксируем ширину блока*/
+        margin-right: 10px;
+        text-align: center; /*Центрируем текст по горизонтали*/
+        border-radius: 8px;
+        border: 1px solid #EEEEEE;
+        padding-top: 8px;
+        height: 100%;
+    }
+  .org-block {
+    float: left; /*Задаем обтекание*/
+    width: 620px; /*Фиксируем ширину блока*/
+    margin-right: 10px;
+    text-align: center; /*Центрируем текст по горизонтали*/
+    border-radius: 8px;
+    border: 1px solid #EEEEEE;
+    padding-top: 8px;
+}
+.wrap :last-child {
+    margin-right: 0px;/*Убираем поле последнего div-а*/
+    }
+
+.card_text {
+  font-family: 'Montserrat', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 17px;
+  color: #000000;
+  margin: 0 0 15px;
+  padding: 0;
+}
+
+  .card_title {
+    font-family: 'Montserrat', sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 24px;
+    color: #000000;
+    margin: 0 0 5px;
+    padding: 0;
+}
+
+  .block_line {
+    text-align: left;
+  }
+
+  .block_content {
+    margin-top: 20px;
+    width: 1110px; /*Фиксируем ширину блока*/
+    margin-right: 10px;
+    text-align: center; /*Центрируем текст по горизонтали*/
+    border-radius: 8px;
+    border: 1px solid #EEEEEE;
+    padding-top: 8px;
+  }
+  .table_events {
+    border-radius: 8px;
+    border: 1px solid #EEEEEE;
+  }
+  .table_events th, tr {
+    border-radius: 8px;
+    border: 1px solid #EEEEEE;
+    padding: 2px;
+  }
+
+
+  .spoiler_title {
+
+	cursor: pointer;
+}
+.spoiler_block, .spoiler_block div{
+	display: none;
+	overflow:hidden;
+}
+.spoiler_block td {padding: 2px auto !important;}
+
+.table td{
+  font-size: 15px;
+  padding: 2px;
+  vertical-align: center;
+  text-align: center;
+}
+
+.table li{
+
+  text-align: left;
+}
+
+</style>
+<div class="wrap"> 
+  <div class="reg-block">
+    <h5> Регламент</h5>
+    {% for reg_item in org.reg_orgs.all %}
+    <p><b>№ </b> {{ reg_item.reg_number }} <b>от </b> {{ reg_item.reg_date }} </p>
+    {% endfor %}
+  </div>
+  <div class="org-block">
+    <div>
+      <p class="card_title">{{ org.org_name }}</p>
+    </div>
+    <div>
+      <p class="card_text">{{ org.org_state }} {{ org.org_city }} {{ org.org_address }}</p>
+    </div>
+    <div Class="block_line">
+      <p class="card_text">ИНН: {{ org.org_inn }}</p>
+    </div>
+    <div Class="block_line">
+      <p class="card_text">Ответственный: {{ org.org_contact_employee }} | {{ org.org_phone }}</p>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="block_line">
+    <h4> Количество дистрибутивов: {{ events.count }}</h4>
+  </div>
+  
+  <table class="table table-bordered table_events"> 
+    <thead>
+      <tr>
+        <th> + </th>
+        <th> VPN </th>
+        <th> Дата </th>
+        <th> Рег № </th>
+        <th> Устр-во </th>
+        <th> ID устр-ва </th>
+        <th> Продавец</th>
+        <th> Акт </th>
+        <th> Дата покупки </th>
+        <th> Шт. </th>
+        <th> Примечание </th>
+      </tr>
+    </thead>
+    
+    {% for key, items in  events.items %}
+    <tr>
+    <td>
+				<label class="spoiler_title">+</label>
+			</td>
+    <td> {{ items.0.vpn_number }} </td>
+    <td> {{ items.0.keys_date }} </td>
+    <td> {{ items.0.keys_number }} </td>
+    <td> {{ items.0.device_name }} </td>
+    <td> {{ items.0.device_id }} </td>
+    <td> {{ items.0.license.distrib_org }} </td>
+    <td> {{ items.0.license.n_license }} </td>
+    <td> {{ items.0.license.lic_date }} </td>
+    <td> {{ items.0.license.ammount }} </td>
+    <td> {{ items.0.comment }} </td>
+    </tr>
+    <tr  class="spoiler_block">
+      <td colspan="11">
+      <div>
+        <ul> 
+        {% for item in items %}
+        <li>{{ item.keys_date }} | {{ item.keys_number }} | {{ item.device_name }} | {{ item.device_id }}</li>
+        {% endfor %}
+        </ul>
+      </div>
+		</tr>
+    {% endfor %}
+    </table>
+{% endblock %} 

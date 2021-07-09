@@ -3,6 +3,7 @@
 
 {% block content %} 
 <style>
+
 table, th, td {
     border: 1px solid black;
 	border-collapse: collapse;
@@ -17,6 +18,7 @@ td {
     padding: 3px;
     text-align: center;
 }
+
 </style>
   <table border="1" style="width:100%"> 
     <tr>
@@ -37,17 +39,17 @@ td {
           {{ reg.reg_number }} <br>
         {% endfor %}
         </td>
-        <td>
+        <td  style="background-color:#DDE7FA">
         {% for reg in event.organisation.reg_orgs.all %} 
           {{ reg.reg_date| date:"d.m.Y" }} <br>
         {% endfor %}
         </td>
         <td> {{ event.organisation.org_inn }} </td>
-        <td> {{ event.organisation.org_name }} </td>
+        <td style="background-color:#DDE7FA"> {{ event.organisation.org_name }} </td>
         <td> {{ event.keys_number }} </td>
-        <td> {{ event.vpn_number }} </td>
+        <td style="background-color:#DDE7FA"> {{ event.vpn_number }} </td>
         <td> {{ event.license.n_license }} </td>
-        <td> {{ event.license.ammount }} </td>
+        <td style="background-color:#DDE7FA"> {{ event.license.ammount }} </td>
         <td> {{ event.comment }} </td>
       </tr>
     {% endfor %}

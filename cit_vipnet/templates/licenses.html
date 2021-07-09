@@ -1,0 +1,72 @@
+{% extends "includes/base.html" %}
+{% block title %}Главная страница {% endblock %}
+
+{% block content %}
+<script>
+ $(document).ready(function(){
+    $('.spoiler_title').click(function(){ 
+        var spoiler = $(this).parent().parent().next();
+        if(spoiler.hasClass('spoiler_block') && spoiler.is(':visible')) {
+            spoiler.animate({padding: '0px auto'}).find('div').slideUp(300,function(){spoiler.hide()});
+        }else{
+           spoiler.show().find('td').animate({padding: '8px auto'}).find('div').slideDown(300);
+        }
+    });
+});
+</script>
+
+<style>
+table, th, td {
+    border: 1px solid black;
+	border-collapse: collapse;
+}
+th {
+    padding: 15px;
+    white-space: nowrap;
+     text-align: center;
+     background-color: #dfeded;
+}
+td {
+    padding: 3px;
+    text-align: center;
+}
+
+  .table_events {
+    border-radius: 8px;
+    border: 1px solid #EEEEEE;
+  }
+  .table_events th, tr {
+    border-radius: 8px;
+    border: 1px solid #EEEEEE;
+    padding: 2px;
+  }
+  
+</style>
+
+  <table border="1" style="width:100%"> 
+    <tr>
+      <th> № акта П/П </th>
+      <th> Дата акта </th>
+      <th> Дистр-ор </th>
+      <th> Кол-во лиц-й</th>
+      <th> Выдано </th>
+      <th> Кол-во выдано </th>
+
+    </tr>
+    {% for lic in page %}
+      <tr>
+        <td> {{ lic.n_license }} </td>
+        <td> {{ lic.lic_date}} </td>
+        <td> {{ lic.distrib_org }} </td>
+        <td> {{ lic.ammount }} </td>
+        <td style="text-align:left; font-size: 10px;"> 
+            {% for org in lic.license.all %}
+               {{ org.organisation.org_name }}</br>
+            {% endfor %}
+        </td>
+        <td> {{lic.license.all.count }} </td>
+
+      </tr>
+    {% endfor %}
+    </table>
+{% endblock %} 
