@@ -1,0 +1,67 @@
+{% extends "includes/base.html" %}
+{% block title %}Главная страница {% endblock %}
+
+{% block content %}
+<div>
+  <button type="submit" onclick="location.href='{% url 'add_org' %}'" name='add_org'>
+    Добавить 
+  </button> 
+  Добавить организации
+</div>
+
+<div>
+  <button type="submit" onclick="location.href='{% url 'add_distr' %}'" name='add_distr'>
+    Добавить 
+  </button>
+  Добавить дистрибьюторов
+</div>
+
+<div>
+  <button type="submit" onclick="location.href='{% url 'add_lic' %}'" name='add_lic'>
+    Добавить 
+  </button>
+  Добавить лицензии
+</div>
+
+<div>
+  <button type="submit" onclick="location.href='{% url 'add_vpn' %}'" name='add_vpn'>
+    Добавить 
+  </button>
+  Добавить СКИ
+</div>
+
+<div>
+  <button type="submit" onclick="location.href='{% url 'add_devices' %}'" name='add_devices'>
+    Добавить 
+  </button>
+  Добавить Устройства
+</div>
+
+</br>
+<div>
+  <button type="submit" onclick="location.href='{% url 'del_all_vpn' %}'" name='del_all_vpn'>
+    Удалить 
+  </button>
+  Удалить СКИ
+</div>
+</br>
+<div>
+  <button type="submit" onclick="location.href='{% url 'change_short_name' %}'" name='change_short_name'>
+    Заменить 
+  </button>
+  Сократить короткое название
+</div>
+</br>
+<h4>События</h4>
+<p>{{ message }}</p>
+{% if logs %}
+  <details>
+  {% for message in logs%}
+    {{message}} </br>
+  {% endfor %}
+{% endif %}
+</details>
+
+
+
+{% endblock %} 

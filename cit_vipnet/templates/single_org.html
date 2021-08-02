@@ -1,0 +1,71 @@
+{% extends "includes/base.html" %}
+{% block title %}Главная страница {% endblock %}
+<h1>{% block header %}Данные об организации{% endblock %}</h1>
+{% block content %} 
+
+<style>
+table, th, td {
+    border: 1px solid black;
+	border-collapse: collapse;
+}
+th {
+    padding: 15px;
+    white-space: nowrap;
+     text-align: center;
+     background-color: #dfeded;
+}
+td {
+    padding: 3px;
+    text-align: center;
+}
+.org_text {
+  margin: 5px;
+}
+.org_block {
+  margin-bottom: 2em;
+}
+</style>
+</br>
+  <h5>{{ org.short_name }}</h5>
+  <div class="org_block">
+    <p class="org_text"><b>Полное наименование:</b> {{ org.full_name }}</p>
+    <p class="org_text"><b>ИНН/КПП:</b> {{ org.inn }} <b>|</b> {{ org.kpp }}</p>
+    <p class="org_text"><b>Населенный пункт:</b> {{ org.town }}</p>
+    <p class="org_text"><b>Адрес:</b> {{ org.address }}</p>
+    <p class="org_text"><b>ФИО ответственного / телефон:</b> {{ org.employee }} <b>|</b> {{ org.phone }}</p>
+    </br>
+    <p class="org_text"><b>№ Регламента:</b> <b>{{ org.reg_number }}</b> от <b>{{ org.reg_date }}</b></p>
+  </div>
+
+  <h5>Дистрибутивы ключей</h5>
+  <table border="1" style="width:100%"> 
+    <tr>
+      <th> Сеть </th>
+      <th> VPN </th>
+      <th> Рег № </th>
+      <th> Дата СКИ </th>
+      <th> Носитель </th>
+      <th> ID носителя </th>
+      <th> Акт </th>
+      <th> Дата акта </th>
+      <th> Кол-во </th>
+      <th> Дистрибьютор </th>
+      <th> Комментарий </th>
+    </tr>
+    {% for key in vpn %}
+    <tr>
+      <td> {{ key.network }} </td>
+      <td> {{ key.vpn_number }} </td>
+      <td> {{ key.reg_number }} </td>
+      <td> {{ key.reg_date | date:"d.m.Y" }} </td>
+      <td> {{ key.device_type.type }} </td>
+      <td> {{ key.device_id}} </td>
+      <td> {{ key.license.act }} </td>
+      <td> {{ key.license.date | date:"d.m.Y" }} </td>
+      <td> {{ key.license.amount }} </td>
+      <td> {{ key.license.distributor }} </td>
+      <td> {{ key.comment }} </td>
+    </tr>
+    {% endfor %}
+    </table>
+{% endblock %} 

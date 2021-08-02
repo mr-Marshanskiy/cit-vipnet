@@ -1,5 +1,4 @@
-from . import models
-
+from models import Organisation
 from datetime import datetime
 import csv
 
@@ -66,44 +65,48 @@ class Application:
 
     def add_record(self, rec):
 
-        #self.records.append(rec)
-        #last_rec = self.records[-1]
-
         if rec.reg_number + rec.org_inn + rec.org_vpn == '':
             return
-        last_rec = self.records[-1]
+        try:
+            last_rec = self.records[-1]
+        except:
+            last_rec = rec
+
         if rec.reg_number == '':
-            rec.reg_number = last_rec.reg_number
-            rec.reg_date = last_rec.reg_date 
+            rec.reg_number = last_rec.reg_number.strip()
+            rec.reg_date = last_rec.reg_date .strip()
 
         if rec.org_net == '':
-            rec.org_net = last_rec.org_net
+            rec.org_net = last_rec.org_net.strip()
 
-        if rec.inn == '':
-            rec.org_name = last_rec.org_name
-            rec.org_state = last_rec.org_state
-            rec.org_city = last_rec.org_city
-            rec.org_street = last_rec.org_street
-            rec.org_street_n = last_rec.org_street_n
-            rec.org_inn = last_rec.org_inn
-            rec.org_contact = last_rec.org_contact
-            rec.org_phone = last_rec.org_phone
+        if rec.org_inn == '':
+            rec.org_name = last_rec.org_name.strip()
+            rec.org_state = last_rec.org_state.strip()
+            rec.org_city = last_rec.org_city.strip()
+            rec.org_street = last_rec.org_street.strip()
+            rec.org_street_n = last_rec.org_street_n.strip()
+            rec.org_inn = last_rec.org_inn.strip()
+            rec.org_contact = last_rec.org_contact.strip()
+            rec.org_phone = last_rec.org_phone.strip()
 
         if rec.distr_name == '':
-            rec.distr_name = last_rec.distr_name
-            rec.dist_number = last_rec.dist_number
-            rec.distr_date = last_rec.distr_date
-            rec.distr_ammount = last_rec.distr_ammount
-
-
+            rec.distr_name = last_rec.distr_name.strip()
+            rec.dist_number = last_rec.dist_number.strip()
+            rec.distr_date = last_rec.distr_date.strip()
+            rec.distr_ammount = last_rec.distr_ammount.strip()
 
         if ((rec.keys_device_name == '')
             and (last_rec.keys_device_name.lower() == 'usb')):
-            rec.keys_device_name = last_rec.keys_device_name
-            rec.keys_device_id = last_rec.keys_device_id
-            rec.keys_number = last_rec.keys_number
-            rec.keys_date = last_rec.keys_date
-
+            rec.keys_device_name = last_rec.keys_device_name.strip()
+            rec.keys_device_id = last_rec.keys_device_id.strip()
+            rec.keys_number = last_rec.keys_number.strip()
+            rec.keys_date = last_rec.keys_date.strip()
+        
+        try:
+            self.records.append(rec)
+        except: 
+            print(rec.org_inn)
+    
     def create_dict(self):
         with open(filepath, encoding='utf-8') as file:
             reader = csv.reader(file)
@@ -111,74 +114,74 @@ class Application:
                 cur_arr = row[0].split(';')
                 self.add_record(Record(cur_arr))
         return
+    
+    def write_to_csv(self):
+        with open(filepath_write, 'wt') as file:
+            writer = csv.writer(file, delimiter=';')
+            writer.writerows(self.records)
+        return
 
+def add_organisation (app):
+    for org in app.records:
+        try:
+            reg_date_convert = datetime.strptime(
+                org.reg_date, '%d.%m.%Y'
+            )
+        except ValueError:
+            reg_date_convert = datetime(2000, 1, 1)
 
-def org_add(app):
-    for org_rec in app.records:
         if not Organisation.objects.filter(
-            org_inn=org_rec.org_inn,
+            inn=org.org_inn,
         ).exists():
             Organisation.objects.create(
-                org_inn=org_rec.org_inn,
-                org_name=org_rec.org_name,
-                org_state=org_rec.org_state,
-                org_city=org_rec.org_city,
-                org_address=org_rec.org_address,
-                org_phone=org_rec.org_phone,
-                org_contact_employee=org_rec.org_contact
-            )
-
-        if not Reglament.objects.filter(
-            reg_number=org_rec.reg_number
-        ).exists():
-            org_object = Organisation.objects.filter(
-                org_inn=org_rec.org_inn,
-            )[0]
-            try:
-                reg_date_convert = datetime.strptime(
-                    org_rec.reg_date, '%d.%m.%Y'
-                )
-            except ValueError:
-                reg_date_convert = datetime(2000, 1, 1)
-            Reglament.objects.create(
-                reg_number=org_rec.reg_number,
+                reg_number=int(org.reg_number),
                 reg_date=reg_date_convert,
-                reg_organisation= org_object,
+                inn=org.org_inn,
+                full_name=org.org_name,
+                short_name=org.org_name,
+                town=org.org_city,
+                address=org.org_address,
+                phone=org.org_phone,
+                employee=org.org_contact,
+                comment=org.advance_info,
             )
+"""
+def org_add(app):
+    for org in app.records:
 
         if not Distributor.objects.filter(
-            org_name=org_rec.distr_name
+            org_name=org.distr_name
         ).exists():
             Distributor.objects.create(
-                org_name=org_rec.distr_name,
+                org_name=org.distr_name,
             )
 
-        if not KeyDevice.objects.filter(
-            type=org_rec.keys_device_name.lower()).exists():
-            KeyDevice.objects.create(
-                type=org_rec.keys_device_name.lower(),
+        if not Device.objects.filter(
+            type=org.keys_device_name.lower()).exists():
+            Device.objects.create(
+                type=org.keys_device_name.lower(),
             )
 
         if not License.objects.filter(
-            n_license=org_rec.dist_number,
+            n_license=org.dist_number,
         ).exists():
             distributor = Distributor.objects.filter(
-                org_name=org_rec.distr_name
+                org_name=org.distr_name
             )[0]
             try:
                 lic_date_convert = datetime.strptime(
-                    org_rec.distr_date, '%d.%m.%Y'
+                    org.distr_date, '%d.%m.%Y'
                 )
             except ValueError:
                 lic_date_convert = datetime(2000, 1, 1)
             try:
                 ammount_convert = int(
-                    org_rec.distr_ammount.split(' ')[0]
+                    org.distr_ammount.split(' ')[0]
                 )
             except ValueError:
                 ammount_convert = 0
             License.objects.create(
-                n_license=org_rec.dist_number,
+                n_license=org.dist_number,
                 lic_date=lic_date_convert,
                 distrib_org=distributor,
                 ammount=ammount_convert
@@ -186,13 +189,13 @@ def org_add(app):
 
         try:
             keys_date_convert = datetime.strptime(
-                org_rec.keys_date, '%d.%m.%Y'
+                org.keys_date, '%d.%m.%Y'
             )
         except ValueError:
                 keys_date_convert = datetime(2000, 1, 1)
 
         try:
-            key_number = int(org_rec.keys_number)
+            key_number = int(org.keys_number)
         except ValueError:
             key_number = 0
         #if not Event.objects.filter(
@@ -200,26 +203,32 @@ def org_add(app):
         #    vpn_number=org_rec.org_vpn,
         #).exists():
         organisation = Organisation.objects.filter(
-            org_inn=org_rec.org_inn
+            org_inn=org.org_inn
         )[0]
-        device =  KeyDevice.objects.filter(
-            type=org_rec.keys_device_name.lower()
+        device =  Device.objects.filter(
+            type=org.keys_device_name.lower()
         )[0]
-        Event.objects.create(
+        Vpn.objects.create(
             organisation=organisation,
             keys_number=key_number,
             keys_date=keys_date_convert,
             device_name=device,
-            device_id=org_rec.keys_device_id,
+            device_id=org.keys_device_id,
             license=License.objects.filter(
-                n_license=org_rec.dist_number
+                n_license=org.dist_number
             )[0],
-            comment=org_rec.advance_info,
-            vpn_number=org_rec.org_vpn,
+            comment=org.advance_info,
+            vpn_number=org.org_vpn,
         )
 
 
 #dbtable = create_dict()
 #org_add(dbtable)
 #reglament_add(dbtable)
-    
+    """
+
+if __name__ == '__main__':
+    app = Application()
+    app.create_dict()
+
+    #add_organisation(app)

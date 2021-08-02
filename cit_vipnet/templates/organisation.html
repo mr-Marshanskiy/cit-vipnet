@@ -1,0 +1,52 @@
+{% extends "includes/base.html" %}
+{% block title %}Главная страница {% endblock %}
+
+{% block content %} 
+<style>
+table, th, td {
+    border: 1px solid black;
+
+}
+th {
+    padding: 15px;
+    white-space: nowrap;
+     text-align: center;
+     background-color: #dfeded;
+}
+td {
+    padding: 3px;
+    text-align: center;
+}
+</style>
+
+  <form action="{% url 'orgs' %}" method="get">
+    <input name="q" type="text" placeholder="Search...">
+  </form>
+  </br>
+  <table border="1" > 
+    <tr>
+      <th> Рег № </th>
+      <th> Дата Рег № </th>
+      <th> Инн </th>
+      <th> Организация </th>
+      <th> Адрес </th>
+      <th> Телефон </th>
+      <th> Сотрудник </th>
+      <th> Количество СКИ <th>
+    </tr>
+    {% for org in page %}
+      <tr>
+        <td>{{ org.reg_number }}</td>
+        <td>{{ org.reg_date| date:"d.m.Y" }}</td>
+        <td>
+          <a href={% url 'single_org' org.inn %} target="_blank"> {{ org.inn }}  </a>
+        </td>
+        <td> {{ org.short_name }} </td>
+        <td> {{ org.address }} </td>
+        <td> {{ org.phone }} </td>
+        <td> {{ org.employee }} </td>
+        <td> {{ org.orgs.count }} </td>
+      </tr>
+    {% endfor %}
+    </table>
+{% endblock %} 

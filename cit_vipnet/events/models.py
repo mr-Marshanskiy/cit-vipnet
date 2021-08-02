@@ -115,7 +115,7 @@ class Organisation(models.Model):
     class Meta:
         verbose_name = 'Организация'
         verbose_name_plural = 'Организации'
-
+        ordering = ['-reg_number']
     def __str__(self):
         return f'{self.inn}'
 
@@ -159,9 +159,10 @@ class Vpn(models.Model):
         related_name='nets',
         blank=True,
         null=True,)
-    reg_number = models.PositiveIntegerField(
+    reg_number = models.CharField(
         blank=True,
         null=True,
+        max_length=30,
         verbose_name=u'Рег. номер СКИ',)
     reg_date = models.DateField(
         blank=True,
@@ -204,6 +205,7 @@ class Vpn(models.Model):
     class Meta:
         verbose_name = 'Дистрибутив ключей'
         verbose_name_plural = 'Дистрибутивы ключей'
+        ordering = ['-reg_date']
 
     def __str__(self):
         return f'{self.reg_number}'
