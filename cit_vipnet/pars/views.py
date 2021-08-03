@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .parscsv2 import ParsXlsx
-from events.models import Organisation, Vpn
+from events.models import Organisation, Vpn, License
 def debug(request):
         #app = ParsXlsx()
         #app.add_organisations()
@@ -81,6 +81,16 @@ def del_all_vpn(request):
         }
     )
 
+def del_all_act(request):
+    License.objects.all().delete()
+    return render(
+        request,
+        'debug.html',
+        {
+            'message': 'Все Акты были удалены',
+        }
+    )
+
 def change_short_name(request):
     orgs = Organisation.objects.all()
     for org in orgs:
@@ -106,5 +116,45 @@ def change_short_name(request):
         'debug.html',
         {
             'message': 'Операция сокращения выполнена',
+        }
+    )
+
+
+def change_lics(request):
+    lics = License.objects.all().prefetch_related()
+    for lic in lics:
+        try:
+            new_lic_act = str(lic.act.split(' ')[-1])
+        except:
+            new_lic_act = lic.act
+        if new_lic_act.isnumeric():
+            old_act = lic.act
+            try:
+                lic.act = new_lic_act
+                lic.save()
+            except:
+                unique_lic = lics.get(act=new_lic_act)
+                vpn = lic.lics.filter(act=old_act)
+                for key in vpn:
+                    key.license = unique_lic
+                    key.save()
+                lic.delete()
+    
+    return render(
+        request,
+        'debug.html',
+        {
+            'message': 'Операция преобразования актов выполнена',
+        }
+    )
+
+def unmerge_with_filling(request):
+    app = ParsXlsx()
+    app.unmerge_with_filling()
+    return render(
+        request,
+        'debug.html',
+        {
+            'message': 'Скрипт по заполнению таблицы выполнен',
         }
     )

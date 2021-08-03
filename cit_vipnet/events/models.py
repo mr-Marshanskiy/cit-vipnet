@@ -201,6 +201,9 @@ class Vpn(models.Model):
         blank=True,
         null=True,
         verbose_name=u'Примечание',)
+    active = models.BooleanField(
+        default=True,
+    )
 
     class Meta:
         verbose_name = 'Дистрибутив ключей'

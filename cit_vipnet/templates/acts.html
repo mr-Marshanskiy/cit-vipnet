@@ -1,0 +1,46 @@
+{% extends "includes/base.html" %}
+{% block title %}Главная страница {% endblock %}
+
+{% block content %} 
+<style>
+table, th, td {
+    border: 1px solid black;
+
+}
+th {
+    padding: 15px;
+    white-space: nowrap;
+     text-align: center;
+     background-color: #dfeded;
+}
+td {
+    padding: 3px;
+    text-align: center;
+}
+</style>
+
+  <form action="{% url 'acts' %}" method="get">
+    <input name="q" type="text" placeholder="Search...">
+  </form>
+  </br>
+  <table border="1" > 
+    <tr>
+      <th> № Акта </th>
+      <th> Дата </th>
+      <th> Дистрибьютор </th>
+      <th> Количество </th>
+      <th> Коммент </th>
+    </tr>
+    {% for lic in page %}
+      <tr>
+        <td>
+          <a href={% url 'single_act' lic.id %} target="_blank"> {{ lic.act }}  </a>
+        </td>
+        <td>{{ lic.date| date:"d.m.Y" }}</td>
+        <td> {{ lic.distributor.name }} </td>
+        <td> {{ lic.amount }} </td>
+        <td> {{ lic.comment }} </td>
+      </tr>
+    {% endfor %}
+    </table>
+{% endblock %} 

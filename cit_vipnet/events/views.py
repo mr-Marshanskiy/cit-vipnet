@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Vpn, Organisation
-from django.db.models import Q
+from .models import License, Vpn, Organisation
+from django.db.models import Q, Count, Subquery, OuterRef
 
 
 
@@ -26,11 +26,12 @@ def orgs(request):
     query = request.GET.get('q')
     if not query:
         query = ''
-    page = Organisation.objects.filter(
+    page = Organisation.objects.prefetch_related().filter(
         Q(inn__icontains=query) | 
         Q(full_name__icontains=query) |
         Q(short_name__icontains=query)
-    )
+    ).annotate(vpn_count=Count('orgs__vpn_number', distinct=True))
+    
     return render(
         request,
         'organisation.html',
@@ -39,14 +40,43 @@ def orgs(request):
         }
     )
 
+def acts(request):
+    query = request.GET.get('q')
+    if not query:
+        query = ''
+    page = License.objects.prefetch_related().filter(
+        Q(act__icontains=query) | 
+        Q(distributor__name__icontains=query)
+    )
+
+    return render(
+        request,
+        'acts.html',
+        {
+            'page': page,
+        }
+    )
+
 def single_org(request, inn):
     org = Organisation.objects.prefetch_related().get(inn=inn)
-    vpn = org.orgs.all().order_by('vpn_number')
+    vpn = org.orgs.all().order_by('network', 'vpn_number', '-reg_date', '-reg_number')
     return render(
         request,
         'single_org.html',
         {
             'vpn': vpn,
             'org': org,
+        }
+    )
+
+def single_act(request, act):
+    lic = License.objects.prefetch_related().get(id=act)
+    vpn = lic.lics.all().order_by('network', 'organisation', 'vpn_number', )
+    return render(
+        request,
+        'single_act.html',
+        {
+            'vpn': vpn,
+            'lic': lic,
         }
     )

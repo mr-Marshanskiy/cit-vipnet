@@ -1,6 +1,8 @@
 <nav class="navbar navbar-light" style="background-color: #e3f2fd;">
     <a class="navbar-brand" href="{% url 'index' %}">ViPNet <span style="color:red"><b>DataBase</b></span></a>
-    <a class="navbar-brand" href="{% url 'index' %}">ViPNet <span style="color:red"><b>DataBase</b></span></a>
+    <a class="navbar-brand" href="{% url 'orgs' %}">Организации</a>
+    <a class="navbar-brand" href="{% url 'acts' %}">Акты</a>
+    <a class="navbar-brand" href="{% url 'debug' %}"><span style="color:red"><b>Debug</b></span></a>
     <nav class="my-2 my-md-0 mr-md-3">
         {% if user.is_authenticated %}
         <b>Пользователь: {{ user.username }} | </b>

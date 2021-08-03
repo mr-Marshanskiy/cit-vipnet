@@ -44,6 +44,12 @@
   </button>
   Удалить СКИ
 </div>
+<div>
+  <button type="submit" onclick="location.href='{% url 'del_all_act' %}'" name='del_all_act'>
+    Удалить 
+  </button>
+  Удалить Акты
+</div>
 </br>
 <div>
   <button type="submit" onclick="location.href='{% url 'change_short_name' %}'" name='change_short_name'>
@@ -51,7 +57,22 @@
   </button>
   Сократить короткое название
 </div>
+<div>
+  <button type="submit" onclick="location.href='{% url 'change_lics' %}'" name='change_lics'>
+    Заменить 
+  </button>
+  Заменить названия в актах
+</div>
 </br>
+<div>
+  <button type="submit" onclick="location.href='{% url 'unmerge_with_filling' %}'" name='unmerge_with_filling'>
+    Заполнить 
+  </button>
+  Заполнить пустые ячейки в таблице
+</div>
+</br>
+
+
 <h4>События</h4>
 <p>{{ message }}</p>
 {% if logs %}

@@ -1,6 +1,6 @@
 {% extends "includes/base.html" %}
-{% block title %}Организация {% endblock %}
-<h1>{% block header %}Данные об организации{% endblock %}</h1>
+{% block title %}Акт {% endblock %}
+<h1>{% block header %}Данные об акте{% endblock %}</h1>
 {% block content %} 
 
 <style>
@@ -26,18 +26,16 @@ td {
 }
 </style>
 </br>
-  <h5>{{ org.short_name }}</h5>
-  <div class="org_block">
-    <p class="org_text"><b>Полное наименование:</b> {{ org.full_name }}</p>
-    <p class="org_text"><b>ИНН/КПП:</b> {{ org.inn }} <b>|</b> {{ org.kpp }}</p>
-    <p class="org_text"><b>Населенный пункт:</b> {{ org.town }}</p>
-    <p class="org_text"><b>Адрес:</b> {{ org.address }}</p>
-    <p class="org_text"><b>ФИО ответственного / телефон:</b> {{ org.employee }} <b>|</b> {{ org.phone }}</p>
+  <h5>Акт: {{ lic.act }}</h5>
+  <div class="lic_block">
+    <p class="lic_text"><b>Дата акта:</b> {{ lic.date }}</p>
+    <p class="lic_text"><b>Дистрибьютор:</b> {{ lic.distributor.name }}</p>
+    <p class="lic_text"><b>Количество:</b> {{ lic.amount }}</p>
+    <p class="lic_text"><b>Комментарий :</b> {{ lic.comment }}</p>
     </br>
-    <p class="org_text"><b>№ Регламента:</b> <b>{{ org.reg_number }}</b> от <b>{{ org.reg_date }}</b></p>
   </div>
 
-  <h5>Дистрибутивы ключей</h5>
+  <h5>Дистрибутивы ключей, выданные по акту</h5>
   <table border="1" style="width:100%"> 
     <tr>
       <th> Сеть </th>
@@ -45,12 +43,10 @@ td {
       <th> Рег № </th>
       <th> Дата СКИ </th>
       <th> Активный </th>
+      <th> Организация </th>
+      <th> Инн </th>
       <th> Носитель </th>
       <th> ID носителя </th>
-      <th> Акт </th>
-      <th> Дата акта </th>
-      <th> Кол-во </th>
-      <th> Дистрибьютор </th>
       <th> Комментарий </th>
       
     </tr>
@@ -61,12 +57,10 @@ td {
       <td> {{ key.reg_number }} </td>
       <td> {{ key.reg_date | date:"d.m.Y" }} </td>
       <td> {{ key.active | yesno:"Да,-"}} </td>
+      <td> {{ key.organisation.short_name }} </td>
+      <td> {{ key.organisation.inn }} </td>
       <td> {{ key.device_type.type }} </td>
       <td> {{ key.device_id}} </td>
-      <td> {{ key.license.act }} </td>
-      <td> {{ key.license.date | date:"d.m.Y" }} </td>
-      <td> {{ key.license.amount }} </td>
-      <td> {{ key.license.distributor }} </td>
       <td> {{ key.comment }} </td>
       
     </tr>

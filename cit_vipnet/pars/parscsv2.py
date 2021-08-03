@@ -45,6 +45,7 @@ class ParsXlsx():
             self.ws.unmerge_cells(str(group))
             for irow in range(min_row, max_row+1):
                 self.ws.cell(row = irow, column = min_col, value = top_cell_value)
+        return
 
     def save_new_xlsx(self):
         self.wb.save(r'E:\db_new.xlsx')
@@ -78,19 +79,22 @@ class ParsXlsx():
         for row in self.ws.iter_rows(values_only=True):
             if row[17] is None:
                 continue
+            act = str(row[17]).strip().split(' ')[-1]
+            try:
+                ammount_convert = int(
+                str(row[19]).strip().split(' ')[0]
+            )
+            except Exception as e:
+                ammount_convert = 0
+                string = str(row[19]).strip().split(' ')[0]
+                logs.append(f'Тип {string} не int, Ошибка: {e}')
             if not License.objects.filter(
-                act=row[17]
+                act=act,
+                amount = ammount_convert,
             ).exists():
                 try:
-                    ammount_convert = int(
-                    str(row[19]).split(' ')[0]
-                )
-                except ValueError:
-                    continue
-
-                try:
                     License.objects.create(
-                        act=(row[17]),
+                        act=act,
                         date=row[18],
                         distributor=Distributor.objects.get(
                                     name=row[16]),
@@ -147,8 +151,11 @@ class ParsXlsx():
                 vpn = 777
 
             org = Organisation.objects.prefetch_related().get(inn=row[6])
-            if not org.orgs.filter(vpn_number=vpn).exists():
+            if not org.orgs.filter(vpn_number=vpn, reg_number=row[12], network=row[2]).exists():
                 try:
+                    amount = int(str(row[19]).strip().split(' ')[0])
+                    lic = License.objects.get(
+                        act=str(row[17]).strip().split(' ')[-1], amount=amount)
                     Vpn.objects.create(
                         network=Network.objects.get(number=row[2]),
                         reg_number=row[12],
@@ -157,8 +164,23 @@ class ParsXlsx():
                         vpn_number=vpn,
                         device_type=Device.objects.get(type=row[14]),
                         device_id=row[15],
-                        license=License.objects.get(act=row[17]),
+                        license=lic,
                     )
-                except Exception as e:
-                    logs.append(f'СКИ {row[11]} ({row[6]}) не была добавлена. Ошибка: {e}')
+                except: 
+                    try:
+                        Vpn.objects.create(
+                            reg_number=row[12],
+                            reg_date=row[13],
+                            organisation=org,
+                            vpn_number=vpn,
+                            device_id=row[15],
+                            comment = (f'Сеть: {row[2]}\n'
+                                        f'Устройство: {row[14]}\n'
+                                        f'Акт: {row[16]}\n'
+                                        f'Номер акта: {row[17]}\n'
+                                        f'Дата акта: {row[18]}\n'
+                                        f'Кол-во: {row[19]}\n') 
+                        )
+                    except Exception as e:
+                        logs.append(f'СКИ {row[11]} ({row[6]}) не была добавлена. Ошибка: {e}')
         return logs
