@@ -1,33 +1,10 @@
 
 from threading import Event
 from openpyxl import load_workbook
-from datetime import datetime
+from datetime import datetime, date
 from events.models import Organisation, License, Vpn, Distributor, Network, Device
 work_sheet = 'Лист1'
 file_path = r'E:\db_new.xlsx'
-cols_d = {
-    'reg_number' : 'A',
-    'reg_date' : 'B',
-    'org_net' : 'C',
-    'org_name' : 'D',
-    'org_city' : 'E',
-    'org_state' : 'F',
-    'org_inn' : 'G',
-    'org_street' : 'H',
-    'org_street_n' : 'I',
-    'org_phone' : 'G',
-    'org_contact' : 'K',
-    'org_vpn' : 'L',
-    'keys_number' : 'M',
-    'keys_date' : 'N',
-    'keys_device_name' : 'O',
-    'keys_device_id' : 'P',
-    'distr_name' : 'Q',
-    'dist_number' : 'R',
-    'distr_date' : 'S',
-    'distr_ammount' : 'T',
-    'advance_info' : 'U',
-}
 
 class ParsXlsx():
     def __init__(self):
@@ -44,7 +21,7 @@ class ParsXlsx():
             top_cell_value = self.ws.cell(row=min_row, column=min_col).value
             self.ws.unmerge_cells(str(group))
             for irow in range(min_row, max_row+1):
-                self.ws.cell(row = irow, column = min_col, value = top_cell_value)
+                self.ws.cell(row = irow, column = max_col, value = top_cell_value)
         return
 
     def save_new_xlsx(self):
@@ -77,32 +54,42 @@ class ParsXlsx():
     def add_licenses(self):
         logs = []
         for row in self.ws.iter_rows(values_only=True):
-            if row[17] is None:
+            if row[17] is None or row[17]=='':
                 continue
-            act = str(row[17]).strip().split(' ')[-1]
+            comment = ''
+            if isinstance(row[18], (date, datetime)):
+                lic_date = row[18]
+            else:
+                lic_date = date(2000, 1, 1)
+                comment += f'Дата акта: {row[18]} | '
             try:
                 ammount_convert = int(
                 str(row[19]).strip().split(' ')[0]
             )
-            except Exception as e:
-                ammount_convert = 0
-                string = str(row[19]).strip().split(' ')[0]
-                logs.append(f'Тип {string} не int, Ошибка: {e}')
+            except:
+                ammount_convert = 777
+                comment = f'Кол-во: {row[19]} |'
+            
+            if not row[16]:
+                distr = 'Неизвестно'
+            else:
+                distr = row[16]
+
             if not License.objects.filter(
-                act=act,
-                amount = ammount_convert,
+                act=row[17],
+                distributor__name = distr,
             ).exists():
                 try:
                     License.objects.create(
-                        act=act,
-                        date=row[18],
+                        act=row[17],
+                        date=lic_date,
                         distributor=Distributor.objects.get(
                                     name=row[16]),
                         amount=ammount_convert,
-                        comment=row[20],
+                        comment=comment,
                     )
                 except Exception as e:
-                    logs.append(f'Акт {row[16]}  не был добавлен. Ошибка: {e}')
+                    logs.append(f'Акт {row[17]}  не был добавлен. Ошибка: {e}')
         return logs
 
     def add_distributors(self):
@@ -144,7 +131,6 @@ class ParsXlsx():
         for row in self.ws.iter_rows(values_only=True):
             if row[11] is None or not Organisation.objects.filter(inn=row[6]).exists():
                 continue
-
             try:
                 vpn = int(str(row[11]).split('-')[-1])
             except:
@@ -154,8 +140,11 @@ class ParsXlsx():
             if not org.orgs.filter(vpn_number=vpn, reg_number=row[12], network=row[2]).exists():
                 try:
                     amount = int(str(row[19]).strip().split(' ')[0])
-                    lic = License.objects.get(
-                        act=str(row[17]).strip().split(' ')[-1], amount=amount)
+                except:
+                    amount = 777
+                lic = License.objects.filter(
+                    act=row[17], distributor__name=row[16]).first()
+                try:
                     Vpn.objects.create(
                         network=Network.objects.get(number=row[2]),
                         reg_number=row[12],
@@ -166,7 +155,8 @@ class ParsXlsx():
                         device_id=row[15],
                         license=lic,
                     )
-                except: 
+                except Exception as e:
+                    logs.append(e)
                     try:
                         Vpn.objects.create(
                             reg_number=row[12],
@@ -176,7 +166,7 @@ class ParsXlsx():
                             device_id=row[15],
                             comment = (f'Сеть: {row[2]}\n'
                                         f'Устройство: {row[14]}\n'
-                                        f'Акт: {row[16]}\n'
+                                        f'Дистр: {row[16]}\n'
                                         f'Номер акта: {row[17]}\n'
                                         f'Дата акта: {row[18]}\n'
                                         f'Кол-во: {row[19]}\n') 

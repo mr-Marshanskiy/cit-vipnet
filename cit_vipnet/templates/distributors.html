@@ -1,0 +1,38 @@
+{% extends "includes/base.html" %}
+{% block title %}Дистрибьюторы{% endblock %}
+
+{% block content %} 
+<style>
+table, th, td {
+    border: 1px solid black;
+
+}
+th {
+    padding: 15px;
+    white-space: nowrap;
+     text-align: center;
+     background-color: #dfeded;
+}
+td {
+    padding: 3px;
+    text-align: center;
+}
+</style>
+
+  <table border="1" > 
+    <tr>
+      <th> Название </th>
+      <th> Адрес </th>
+      <th> Выдано актов </th>
+    </tr>
+    {% for org in page %}
+      <tr>
+        <td>
+        <a href={% url 'single_seller' org.id %} > {{ org.name }}  </a>
+        </td>
+        <td>{{ org.address }}</td>
+        <td> {{org.lic_count}}</td>
+      </tr>
+    {% endfor %}
+    </table>
+{% endblock %} 

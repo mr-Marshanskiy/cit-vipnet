@@ -1,0 +1,62 @@
+{% extends "includes/base.html" %}
+{% block title %}Устройство {{ device.type }} {% endblock %}
+<h1>{% block header %} {{ device.type }} {% endblock %}</h1>
+{% block content %} 
+
+<style>
+table, th, td {
+    border: 1px solid black;
+	border-collapse: collapse;
+}
+th {
+    padding: 15px;
+    white-space: nowrap;
+     text-align: center;
+     background-color: #dfeded;
+}
+td {
+    padding: 3px;
+    text-align: center;
+}
+.org_text {
+  margin: 5px;
+}
+.org_block {
+  margin-bottom: 2em;
+}
+</style>
+</br>
+  <h5>СКИ, выданная на {{ device.type }}. Итого: {{ vpn.count }}</h5>
+  <table border="1" style="width:100%"> 
+    <tr>
+      <th> Сеть </th>
+      <th> Инн </th>
+      <th> Организация </th>
+      <th> Рег № СКИ </th>
+      <th> Дата СКИ </th>
+      <th> VPN </th>
+      <th> Акт </th>
+      <th> Кол-во лицензий </th>
+      <th> Примечание </th>  
+    </tr>
+    {% for key in vpn %}
+    <tr>
+      <td> {{ key.network }} </td>
+      <td>
+        <a href={% url 'single_org' key.organisation.inn %}> {{ key.organisation.inn }} </a>
+      </td>
+      <td> {{ key.organisation.short_name }} </td>
+      <td> {{ key.reg_number }} </td>
+      <td> {{ key.reg_date | date:"d.m.Y" }} </td>
+      <td> {{ key.vpn_number }} </td>
+      <td> 
+        {% if key.license %}
+        <a href={% url 'single_act' key.license.id %> {{ key.license.act }} </a>
+        {% endif %}
+      </td>
+      <td> {{ key.license.amount }} </td>
+      <td> {{ key.comment }} </td>
+    </tr>
+    {% endfor %}
+    </table>
+{% endblock %} 

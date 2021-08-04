@@ -71,6 +71,43 @@
   Заполнить пустые ячейки в таблице
 </div>
 </br>
+<div>
+  <button type="submit" onclick="location.href='{% url 'move_device' %}'" name='unmerge_with_filling'>
+    Выбрать 
+  </button>
+  Произвести слияние Актов
+</div>
+
+{% if form %}
+</br>
+<form method="post" enctype="form-data">
+{% csrf_token %}
+  Старый Акт {{ form.old_type }}
+  Новый Акт {{ form.new_type }}
+<button type="submit" href="{% url 'move_device' %}" class="move_device">
+  Заменить
+</button>
+</form>
+</br>
+{% endif %}
+<div>
+  <button type="submit" onclick="location.href='{% url 'move_distributors' %}'" name='unmerge_with_filling'>
+    Выбрать 
+  </button>
+  Произвести слияние Дистрибьюторов
+</div>
+{% if form_move_distr %}
+</br>
+<form method="post" enctype="form-data">
+{% csrf_token %}
+  Удаляемый {{ form_move_distr.old_seller }}
+  Преемник {{ form_move_distr.new_seller }}
+<button type="submit" href="{% url 'move_distributors' %}" class="move_distributors">
+  Заменить
+</button>
+</form>
+</br>
+{% endif %}
 
 
 <h4>События</h4>

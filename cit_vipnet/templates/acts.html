@@ -1,6 +1,6 @@
 {% extends "includes/base.html" %}
-{% block title %}Главная страница {% endblock %}
-
+{% block title %} Акты П/П {% endblock %}
+{% block header %} Список актов П/П прав на ПО ViPNet {% endblock %}
 {% block content %} 
 <style>
 table, th, td {
@@ -21,6 +21,7 @@ td {
 
   <form action="{% url 'acts' %}" method="get">
     <input name="q" type="text" placeholder="Search...">
+    Найти вхождения
   </form>
   </br>
   <table border="1" > 
@@ -37,7 +38,9 @@ td {
           <a href={% url 'single_act' lic.id %} target="_blank"> {{ lic.act }}  </a>
         </td>
         <td>{{ lic.date| date:"d.m.Y" }}</td>
-        <td> {{ lic.distributor.name }} </td>
+        <td>
+          <a href={% url 'single_seller' lic.distributor.id %} target="_blank"> {{ lic.distributor.name }} </a>
+        </td>
         <td> {{ lic.amount }} </td>
         <td> {{ lic.comment }} </td>
       </tr>

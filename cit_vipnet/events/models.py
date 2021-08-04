@@ -131,7 +131,7 @@ class License(models.Model):
     distributor = models.ForeignKey(
         'Distributor',
         on_delete=models.SET_NULL,
-        related_name="distruitors",
+        related_name="distributors",
         verbose_name=u"Распространитель",
         blank=True,
         null=True,)

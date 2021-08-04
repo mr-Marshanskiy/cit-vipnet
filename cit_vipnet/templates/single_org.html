@@ -61,12 +61,24 @@ td {
       <td> {{ key.reg_number }} </td>
       <td> {{ key.reg_date | date:"d.m.Y" }} </td>
       <td> {{ key.active | yesno:"Да,-"}} </td>
-      <td> {{ key.device_type.type }} </td>
+      <td>
+        {% if key.license %}
+          <a href={% url 'single_device' key.device_type.id %> {{ key.device_type.type }} </a>
+        {% endif %}
+      </td>
       <td> {{ key.device_id}} </td>
-      <td> {{ key.license.act }} </td>
+      <td>
+        {% if key.license %}
+          <a href={% url 'single_act' key.license.id %> {{ key.license.act }} </a>
+        {% endif %}
+      </td>
       <td> {{ key.license.date | date:"d.m.Y" }} </td>
       <td> {{ key.license.amount }} </td>
-      <td> {{ key.license.distributor }} </td>
+      <td> 
+        {% if key.license %}
+          <a href={% url 'single_seller' key.license.distributor.id %> {{ key.license.distributor.name }} </a>
+        {% endif %}
+      </td>
       <td> {{ key.comment }} </td>
       
     </tr>

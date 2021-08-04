@@ -1,13 +1,17 @@
 from django.shortcuts import render
 from .parscsv2 import ParsXlsx
-from events.models import Organisation, Vpn, License
+from events.models import Organisation, Vpn, License, Device, Distributor
+
+from .forms import MoveDeviceForm, MoveDistributorForm
+
+
 def debug(request):
-        #app = ParsXlsx()
-        #app.add_organisations()
-        page = Organisation.objects.all()
+        form = MoveDeviceForm()
+
         return render(
         request,
         'debug.html',
+
      )
 
 def add_organisations(request):
@@ -151,10 +155,123 @@ def change_lics(request):
 def unmerge_with_filling(request):
     app = ParsXlsx()
     app.unmerge_with_filling()
+    app.save_new_xlsx()
     return render(
         request,
         'debug.html',
         {
             'message': 'Скрипт по заполнению таблицы выполнен',
+        }
+    )
+
+
+def move_device(request):
+    if request.method != 'POST':
+        form = MoveDeviceForm()
+        return render(
+            request, 
+            'debug.html',
+            {
+            'form': form,
+            }
+        )
+    
+    form = MoveDeviceForm(request.POST)
+    try:
+        old_type = form['old_type'].value()
+        new_type = form['new_type'].value()
+
+        old_device = Device.objects.get(id=old_type)
+        new_device = Device.objects.get(id=new_type)
+    except:
+        return render(
+            request,
+            'debug.html',
+            {
+                'message': f'Проверьте введенные данные',
+                'form': form,
+            }
+        )
+    if old_device == new_device:
+        return render(
+        request,
+        'debug.html',
+        {
+            'message': f'{old_type} и {new_type} как бы одинаковы?!?!?',
+            'form': form,
+        }
+    )
+
+    vpn = Vpn.objects.filter(device_type=old_device)
+
+    for key in vpn:
+        key.device_type = new_device
+        key.save()
+    
+    old_device.delete()
+    
+    form = MoveDeviceForm()
+    return render(
+        request,
+        'debug.html',
+        {
+            'form':form,
+            'message': f'Слияние актов произведено',
+        }
+    )
+
+
+def move_distributors(request):
+    if request.method != 'POST':
+        form = MoveDistributorForm()
+        return render(
+            request, 
+            'debug.html',
+            {
+            'form_move_distr': form,
+            }
+        )
+    
+    form = MoveDistributorForm(request.POST)
+    try:
+        old_seller_id = form['old_seller'].value()
+        new_seller_id = form['new_seller'].value()
+
+        old_seller = Distributor.objects.get(id=old_seller_id)
+        new_seller = Distributor.objects.get(id=new_seller_id)
+    except:
+        return render(
+            request,
+            'debug.html',
+            {
+                'message': f'Проверьте введенные данные',
+                'form_move_distr': form,
+            }
+        )
+    if old_seller == new_seller:
+        return render(
+        request,
+        'debug.html',
+        {
+            'message': f'{old_seller} и {new_seller} как бы одинаковы?!?!?',
+            'form_move_distr': form,
+        }
+    )
+
+    licenses = License.objects.filter(distributor=old_seller)
+
+    for lic in licenses:
+        lic.distributor = new_seller
+        lic.save()
+    
+    old_seller.delete()
+    
+    form = MoveDistributorForm()
+    return render(
+        request,
+        'debug.html',
+        {
+            'form_move_distr': form,
+            'message': f'Слияние актов произведено',
         }
     )

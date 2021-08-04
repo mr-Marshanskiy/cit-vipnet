@@ -32,14 +32,14 @@ td {
       <th> Адрес </th>
       <th> Телефон </th>
       <th> Сотрудник </th>
-      <th> Количество СКИ <th>
+      <th> Количество СКИ </th>
     </tr>
     {% for org in page %}
       <tr>
         <td>{{ org.reg_number }}</td>
         <td>{{ org.reg_date| date:"d.m.Y" }}</td>
         <td>
-          <a href={% url 'single_org' org.inn %} target="_blank"> {{ org.inn }}  </a>
+          <a href={% url 'single_org' org.inn %}> {{ org.inn }} </a>
         </td>
         <td> {{ org.short_name }} </td>
         <td> {{ org.address }} </td>
