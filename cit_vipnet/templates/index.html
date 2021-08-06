@@ -1,41 +1,32 @@
 {% extends "includes/base.html" %}
 {% block title %}Главная страница {% endblock %}
-
+{% block header %} События {% endblock %}
 {% block content %} 
 <style>
-table, th, td {
-    border: 1px solid black;
-}
-th {
-    padding: 15px;
-    white-space: nowrap;
-     text-align: center;
-     background-color: #dfeded;
-}
-td {
-    padding: 3px;
-    text-align: center;
-}
 </style>
-<div style="align: center;">
+<div class="container-fluid">
 
-  <form action="{% url 'index' %}" method="get">
-    <input name="q" type="text" placeholder="Search...">
+  <form class="form-inline" action="{% url 'index' %}" method="get">
+    <div class="form-group mx-sm-3 mb-2">
+      <input class="form-control" name="q" type="text" placeholder="Search...">
+    </div>
+    <button type="submit" class="btn btn-primary mb-2">Фильтровать</button>
   </form>
   </br>
-  <table border="1" style="width:100%;"> 
-    <tr>
-      <th> Рег № </th>
-      <th> Дата Рег № </th>
-      <th> Инн </th>
-      <th> Организация </th>
-      <th> Рег № СКИ </th>
-      <th> Дата СКИ </th>
-      <th> VPN </th>
-      <th> Акт </th>
-      <th> Кол-во лицензий </th>
-      <th> Примечание </th>
-    </tr>
+  <table class="table table-sm text-center table-bordered table-hover">
+    <thead "thead-dark"> 
+      <th nowrap="nowrap" scope="row"> Рег № </th>
+      <th nowrap="nowrap"scope="row"> Дата Рег № </th>
+      <th scope="row"> Инн </th>
+      <th scope="row"> Организация </th>
+      <th nowrap="nowrap" scope="row"> Рег № СКИ </th>
+      <th scope="row"> Дата СКИ </th>
+      <th scope="row"> VPN </th>
+      <th scope="row"> Акт </th>
+      <th nowrap="nowrap" scope="row"> Кол-во</th>
+      <th scope="row"> Примечание </th>
+    </thead>
+    <tbody>
     {% for vpn in page %}
       <tr>
         <td> {{ vpn.organisation.reg_number }} </td>
@@ -44,12 +35,14 @@ td {
         <td> {{ vpn.organisation.short_name }} </td>
         <td> {{ vpn.reg_number }} </td>
         <td> {{ vpn.reg_date | date:"d.m.Y" }} </td>
-        <td> {{ vpn.vpn_number }} </td>
+        <td nowrap="nowrap"> VPN-{{ vpn.vpn_number }}</td>
         <td> {{ vpn.license.act }} </td>
-        <td> {{ vpn.license.amount }} </td>
-        <td> {{ vpn.comment }} </td>
+        <td nowrap="nowrap"> {% if vpn.license.amount %} {{ vpn.license.amount }} шт. {% endif %}</td>
+        <td> {% if vpn.comment %} {{ vpn.comment }} {% endif %}</td>
       </tr>
     {% endfor %}
+    </tbody>
     </table>
   </div>
+  
 {% endblock %} 

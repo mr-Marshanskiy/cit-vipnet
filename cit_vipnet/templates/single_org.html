@@ -2,30 +2,14 @@
 {% block title %}Организация {% endblock %}
 <h1>{% block header %}Данные об организации{% endblock %}</h1>
 {% block content %} 
-
 <style>
-table, th, td {
-    border: 1px solid black;
-	border-collapse: collapse;
-}
-th {
-    padding: 15px;
-    white-space: nowrap;
-     text-align: center;
-     background-color: #dfeded;
-}
-td {
-    padding: 3px;
-    text-align: center;
-}
-.org_text {
-  margin: 5px;
-}
-.org_block {
-  margin-bottom: 2em;
+.td-width {
+  max-width: 500px;
+  overflow-wrap: break-word;
 }
 </style>
-</br>
+<div class="container text-left" >
+ </br>
   <h5>{{ org.short_name }}</h5>
   <div class="org_block">
     <p class="org_text"><b>Полное наименование:</b> {{ org.full_name }}</p>
@@ -33,55 +17,59 @@ td {
     <p class="org_text"><b>Населенный пункт:</b> {{ org.town }}</p>
     <p class="org_text"><b>Адрес:</b> {{ org.address }}</p>
     <p class="org_text"><b>ФИО ответственного / телефон:</b> {{ org.employee }} <b>|</b> {{ org.phone }}</p>
-    </br>
     <p class="org_text"><b>№ Регламента:</b> <b>{{ org.reg_number }}</b> от <b>{{ org.reg_date }}</b></p>
   </div>
-
+  
+  </div>
   <h5>Дистрибутивы ключей</h5>
-  <table border="1" style="width:100%"> 
-    <tr>
-      <th> Сеть </th>
-      <th> VPN </th>
-      <th> Рег № </th>
-      <th> Дата СКИ </th>
-      <th> Активный </th>
-      <th> Носитель </th>
-      <th> ID носителя </th>
-      <th> Акт </th>
-      <th> Дата акта </th>
-      <th> Кол-во </th>
-      <th> Дистрибьютор </th>
-      <th> Комментарий </th>
-      
-    </tr>
-    {% for key in vpn %}
-    <tr>
-      <td> {{ key.network }} </td>
-      <td> {{ key.vpn_number }} </td>
-      <td> {{ key.reg_number }} </td>
-      <td> {{ key.reg_date | date:"d.m.Y" }} </td>
-      <td> {{ key.active | yesno:"Да,-"}} </td>
-      <td>
-        {% if key.license %}
-          <a href={% url 'single_device' key.device_type.id %> {{ key.device_type.type }} </a>
-        {% endif %}
-      </td>
-      <td> {{ key.device_id}} </td>
-      <td>
-        {% if key.license %}
-          <a href={% url 'single_act' key.license.id %> {{ key.license.act }} </a>
-        {% endif %}
-      </td>
-      <td> {{ key.license.date | date:"d.m.Y" }} </td>
-      <td> {{ key.license.amount }} </td>
-      <td> 
-        {% if key.license %}
-          <a href={% url 'single_seller' key.license.distributor.id %> {{ key.license.distributor.name }} </a>
-        {% endif %}
-      </td>
-      <td> {{ key.comment }} </td>
-      
-    </tr>
-    {% endfor %}
+  <div class="container" >
+    <table class=" table table-sm text-center table-bordered table-hover">
+      <thead "thead-dark">
+        <th> Сеть </th>
+        <th> VPN </th>
+        <th nowrap="nowrap"> Рег № </th>
+        <th> Дата СКИ </th>
+        <th> Активный </th>
+        <th> Носитель </th>
+        <th> ID носителя </th>
+        <th> Акт </th>
+        <th> Дата акта </th>
+        <th> Кол-во </th>
+        <th> Дистрибьютор </th>
+        <th> Комментарий </th>
+      </thead>
+      <tbody>
+      {% for key in vpn %}
+      <tr>
+        <td> {{ key.network }} </td>
+        <td nowrap="nowrap"> VPN-{{ key.vpn_number }} </td>
+        <td> {{ key.reg_number }} </td>
+        <td> {{ key.reg_date | date:"d.m.Y" }} </td>
+        <td> {{ key.active | yesno:"Да,-"}} </td>
+        <td>
+          {% if key.license %}
+            <a href={% url 'single_device' key.device_type.id %> {{ key.device_type.type }} </a>
+          {% endif %}
+        </td>
+        <td class="td-width"> {{ key.device_id}} </td>
+        <td>
+          {% if key.license %}
+            <a href={% url 'single_act' key.license.id %> {{ key.license.act }} </a>
+          {% endif %}
+        </td>
+        <td> {{ key.license.date | date:"d.m.Y" }} </td>
+        <td> {{ key.license.amount }} </td>
+        <td> 
+          {% if key.license %}
+            <a href={% url 'single_seller' key.license.distributor.id %> {{ key.license.distributor.name }} </a>
+          {% endif %}
+        </td>
+        <td> {{ key.comment }} </td>
+        
+      </tr>
+      {% endfor %}
+      </tbody>
     </table>
+
+</div>
 {% endblock %} 

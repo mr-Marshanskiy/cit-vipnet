@@ -2,42 +2,21 @@
 {% block title %}Акт {% endblock %}
 <h1>{% block header %}Данные об акте{% endblock %}</h1>
 {% block content %} 
-
-<style>
-table, th, td {
-    border: 1px solid black;
-	border-collapse: collapse;
-}
-th {
-    padding: 15px;
-    white-space: nowrap;
-     text-align: center;
-     background-color: #dfeded;
-}
-td {
-    padding: 3px;
-    text-align: center;
-}
-.org_text {
-  margin: 5px;
-}
-.org_block {
-  margin-bottom: 2em;
-}
-</style>
-</br>
+<div class="container" >
   <h5>Акт: {{ lic.act }}</h5>
-  <div class="lic_block">
+  <div class="lic_block text-left">
     <p class="lic_text"><b>Дата акта:</b> {{ lic.date }}</p>
     <p class="lic_text"><b>Дистрибьютор:</b> {{ lic.distributor.name }}</p>
-    <p class="lic_text"><b>Количество:</b> {{ lic.amount }}</p>
+    <p class="lic_text"><b>Количество:</b> {{ lic.amount }} шт.</p>
     <p class="lic_text"><b>Комментарий :</b> {{ lic.comment }}</p>
     </br>
   </div>
 
-  <h5>Дистрибутивы ключей, выданные по акту</h5>
-  <table border="1" style="width:100%"> 
-    <tr>
+<h5>Дистрибутивы ключей, выданные по акту</h5>
+
+  <table class=" table table-sm text-center table-bordered table-hover">
+    <thead "thead-dark">
+      <th> Залуп Каунтер </th>
       <th> Сеть </th>
       <th> VPN </th>
       <th> Рег № </th>
@@ -48,10 +27,11 @@ td {
       <th> Носитель </th>
       <th> ID носителя </th>
       <th> Комментарий </th>
-      
-    </tr>
+    </thead>
+    <tbody>
     {% for key in vpn %}
     <tr>
+      <td> {{ forloop.counter }}. </td>
       <td> {{ key.network }} </td>
       <td> {{ key.vpn_number }} </td>
       <td> {{ key.reg_number }} </td>
@@ -62,8 +42,9 @@ td {
       <td> {{ key.device_type.type }} </td>
       <td> {{ key.device_id}} </td>
       <td> {{ key.comment }} </td>
-      
     </tr>
     {% endfor %}
-    </table>
+    </tbody>
+  </table>
+</div>
 {% endblock %} 

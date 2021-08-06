@@ -3,47 +3,31 @@
 <h1>{% block header %}{{ seller.name }}{% endblock %}</h1>
 {% block content %} 
 
-<style>
-table, th, td {
-    border: 1px solid black;
-	border-collapse: collapse;
-}
-th {
-    padding: 15px;
-    white-space: nowrap;
-     text-align: center;
-     background-color: #dfeded;
-}
-td {
-    padding: 3px;
-    text-align: center;
-}
-.org_text {
-  margin: 5px;
-}
-.org_block {
-  margin-bottom: 2em;
-}
-</style>
-</br>
+<div class="container">
   <h5>{{ seller.address }}</h5>
 
   <h5>Акты, выданные дистрибьютором. Итого: {{ lics.count }}</h5>
-  <table border="1" style="width:100%"> 
-    <tr>
-      <th> № Акта </th>
-      <th> Дата акта </th>
-      <th> Количество </th>     
-    </tr>
-    {% for key in lics %}
-    <tr>
-      <td>
-        <a href={% url 'single_act' key.id %}> {{key.act  }}  </a>
-      </td>
-      <td> {{ key.date }} </td>
-      <td> {{ key.amount }} </td>
-      
-    </tr>
-    {% endfor %}
-    </table>
+  <div class="row justify-content-around">
+    <div class="col-7">
+      <table class=" table table-sm text-center table-bordered table-hover">
+        <thead "thead-dark">
+          <th> № Акта </th>
+          <th> Дата акта </th>
+          <th> Количество </th>     
+        </thead>
+        <tbody>
+        {% for key in lics %}
+        <tr>
+          <td>
+            <a href={% url 'single_act' key.id %}> {{key.act  }}  </a>
+          </td>
+          <td> {{ key.date }} </td>
+          <td> {{ key.amount }} шт.</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 {% endblock %} 

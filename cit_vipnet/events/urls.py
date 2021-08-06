@@ -10,9 +10,11 @@ urlpatterns = [
 
     path('sellers/', views.DistributorListView.as_view(), name='sellers'),
     path('sellers/<int:pk>/', views.DistributorDetailView.as_view(), name='single_seller'),
+    path('sellers/delete/<int:pk>/', views.DistributorDeleteView.as_view(), name='delete_seller'),
 
     path('devices/', views.DevicesListView.as_view(), name='devices'),
     path('devices/<int:pk>/', views.DevicesDetailView.as_view(), name='single_device'),
+    
     path('', views.index, name='index'),
 
 ] 

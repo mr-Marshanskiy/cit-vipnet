@@ -2,48 +2,41 @@
 {% block title %} Акты П/П {% endblock %}
 {% block header %} Список актов П/П прав на ПО ViPNet {% endblock %}
 {% block content %} 
-<style>
-table, th, td {
-    border: 1px solid black;
-
-}
-th {
-    padding: 15px;
-    white-space: nowrap;
-     text-align: center;
-     background-color: #dfeded;
-}
-td {
-    padding: 3px;
-    text-align: center;
-}
-</style>
-
-  <form action="{% url 'acts' %}" method="get">
-    <input name="q" type="text" placeholder="Search...">
-    Найти вхождения
-  </form>
-  </br>
-  <table border="1" > 
-    <tr>
-      <th> № Акта </th>
-      <th> Дата </th>
-      <th> Дистрибьютор </th>
-      <th> Количество </th>
-      <th> Коммент </th>
-    </tr>
-    {% for lic in page %}
-      <tr>
-        <td>
-          <a href={% url 'single_act' lic.id %} target="_blank"> {{ lic.act }}  </a>
-        </td>
-        <td>{{ lic.date| date:"d.m.Y" }}</td>
-        <td>
-          <a href={% url 'single_seller' lic.distributor.id %} target="_blank"> {{ lic.distributor.name }} </a>
-        </td>
-        <td> {{ lic.amount }} </td>
-        <td> {{ lic.comment }} </td>
-      </tr>
-    {% endfor %}
+</br>
+<div class="container" >
+  <form class="form-inline" action="{% url 'acts' %}" method="get">
+      <div class="form-group mx-sm-3 mb-2">
+        <input class="form-control" name="q" type="text" placeholder="Search...">
+      </div>
+      <button type="submit" class="btn btn-primary mb-2">Фильтровать</button>
+    </form>
+    </br>
+    <table class=" table table-sm text-center table-bordered table-hover"> 
+      <thead "thead-dark"> 
+        <th scope="row"> № Акта </th>
+        <th scope="row"> Дата </th>
+        <th scope="row"> Дистрибьютор </th>
+        <th scope="row"> Кол-во </th>
+        <th scope="row"> Использовано </th>
+        <th scope="row"> Коммент </th>
+        
+      </thead>
+      <tbody class="table">
+      {% for lic in page %}
+        <tr>
+          <td>
+            <a href={% url 'single_act' lic.id %} target="_blank"> {{ lic.act }}  </a>
+          </td>
+          <td>{{ lic.date| date:"d.m.Y" }}</td>
+          <td>
+            <a href={% url 'single_seller' lic.distributor.id %} target="_blank"> {{ lic.distributor.name }} </a>
+          </td>
+          <td> {{ lic.amount }} шт.</td>
+          <td> {{ lic.lics.count }} шт.</td>
+          <td> {{ lic.comment }} </td>
+        </tr>
+      {% endfor %}
+      </tbody>
     </table>
+  </div>
 {% endblock %} 

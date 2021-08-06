@@ -1,36 +1,26 @@
 {% extends "includes/base.html" %}
 {% block title %}Устройства{% endblock %}
-
+{% block header %} Ключевые носители{% endblock %}
 {% block content %} 
-<style>
-table, th, td {
-    border: 1px solid black;
-
-}
-th {
-    padding: 15px;
-    white-space: nowrap;
-     text-align: center;
-     background-color: #dfeded;
-}
-td {
-    padding: 3px;
-    text-align: center;
-}
-</style>
-
-  <table border="1" > 
-    <tr>
-      <th> Тип устройства </th>
-      <th> Количество СКИ </th>
-    </tr>
-    {% for device in page %}
-      <tr>
-        <td>
-          <a href={% url 'single_device' device.id %}> {{ device.type }} </a>
-        </td>
-        <td>{{ device.device_count }}</td>
-      </tr>
-    {% endfor %}
-    </table>
+<div class="container" >
+  <div class="row justify-content-around">
+    <div class="col-4">
+      <table class=" table table-sm text-center table-bordered table-hover">
+        <thead "thead-dark">
+          <th> Тип устройства </th>
+          <th> Количество СКИ </th>
+        </thead>
+        <tbody>
+        {% for device in page %}
+            <td>
+              <a href={% url 'single_device' device.id %}> {{ device.type }} </a>
+            </td>
+            <td>{{ device.device_count }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 {% endblock %} 

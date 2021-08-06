@@ -1,8 +1,13 @@
+from django.urls.base import reverse_lazy
+from .forms import DistributorForm
+from django.utils.translation import ugettext as _
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Device, Distributor, License, Vpn, Organisation
-from django.db.models import Q, Count, Subquery, OuterRef
+from django.db.models import Q, Count
+from django.http import Http404
+from django.views.generic.edit import DeletionMixin, FormMixin
 
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, DeleteView
 
 def index(request):
     query = request.GET.get('q')
@@ -82,13 +87,41 @@ def single_act(request, pk):
     )
 
 
-class DistributorListView(ListView):
+class FormListView(FormMixin, ListView):
+    def post(self, request, *args, **kwargs):
+        """ Обработка POST при использовани FormMixin в DetailView """
+        
+        print('23123123123')
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+
+
+class DistributorListView(FormListView):
+    template_name = 'distributors.html'
+    form_class = DistributorForm
     model = Distributor
     context_object_name = 'page'
     queryset = Distributor.objects.all().annotate(
         lic_count=Count('distributors')
     ).order_by('-lic_count')
-    template_name = 'distributors.html'
+
+    success_url = reverse_lazy('sellers')
+
+
+class DistributorDeleteView(DeleteView):
+    model = Distributor
+    success_url = reverse_lazy('sellers')
+
+    def get(self, *a, **kw):
+        return self.delete(*a, **kw)
 
 
 class DevicesListView(ListView):
@@ -119,4 +152,3 @@ class DevicesDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['vpn'] = Vpn.objects.filter(device_type=self.object).order_by('-reg_date')
         return context
-   
