@@ -1,5 +1,5 @@
 from django.urls.base import reverse_lazy
-from .forms import DistributorForm
+from .forms import DistributorForm, DeviceForm
 from django.utils.translation import ugettext as _
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Device, Distributor, License, Vpn, Organisation
@@ -90,8 +90,6 @@ def single_act(request, pk):
 class FormListView(FormMixin, ListView):
     def post(self, request, *args, **kwargs):
         """ Обработка POST при использовани FormMixin в DetailView """
-        
-        print('23123123123')
         form = self.get_form()
         if form.is_valid():
             return self.form_valid(form)
@@ -103,7 +101,6 @@ class FormListView(FormMixin, ListView):
         return super().form_valid(form)
 
 
-
 class DistributorListView(FormListView):
     template_name = 'distributors.html'
     form_class = DistributorForm
@@ -112,25 +109,49 @@ class DistributorListView(FormListView):
     queryset = Distributor.objects.all().annotate(
         lic_count=Count('distributors')
     ).order_by('-lic_count')
-
     success_url = reverse_lazy('sellers')
+
+
+class DistributorListForDeleteView(ListView):
+    model = Distributor
+    context_object_name = 'page'
+    template_name = 'delete_distributors.html'
+
+    def get_queryset(self, *args, **kwargs):
+        query = self.request.GET.get('q')
+        if not query:
+            queryset = Distributor.objects.all().annotate(
+                lic_count=Count('distributors')
+            ).order_by('-lic_count')
+            success_url = reverse_lazy('sellers')
+            return queryset
+        queryset = Distributor.objects.filter(
+            Q(name__icontains=query) |
+            Q(address__icontains=query)
+        ).annotate(
+            lic_count=Count('distributors')
+        ).order_by('-lic_count')
+        return queryset
 
 
 class DistributorDeleteView(DeleteView):
     model = Distributor
-    success_url = reverse_lazy('sellers')
+    success_url = reverse_lazy('deleting_list_sellers')
 
     def get(self, *a, **kw):
         return self.delete(*a, **kw)
 
 
-class DevicesListView(ListView):
+class DevicesListView(FormListView):
+    form_class = DeviceForm
     model = Device
     context_object_name = 'page'
     queryset = Device.objects.all().annotate(
         device_count=Count('devices')
     ).order_by('-device_count')
+    success_url = reverse_lazy('devices')
     template_name = 'devices.html'
+
 
 class DistributorDetailView(DetailView):
     model = Distributor

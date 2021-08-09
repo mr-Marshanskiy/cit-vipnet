@@ -2,29 +2,31 @@
 {% block title %}Главная страница {% endblock %}
 {% block header %} События {% endblock %}
 {% block content %} 
-<style>
-</style>
-<div class="container-fluid">
-
+<div class="container">
   <form class="form-inline" action="{% url 'index' %}" method="get">
-    <div class="form-group mx-sm-3 mb-2">
-      <input class="form-control" name="q" type="text" placeholder="Search...">
+    <div class="row justify-content-md-center">
+      <div class="col col-lg-3">
+        <input class="form-control" name="q" type="text" placeholder="Поиск совпадений...">
+      </div>
+      <div class="col col-lg-1">
+        <button type="submit" class="btn btn-primary mb-2">Фильтровать</button>
+      </div>
     </div>
-    <button type="submit" class="btn btn-primary mb-2">Фильтровать</button>
   </form>
-  </br>
+</div>
+<div class="container-fluid">
   <table class="table table-sm text-center table-bordered table-hover">
-    <thead "thead-dark"> 
-      <th nowrap="nowrap" scope="row"> Рег № </th>
-      <th nowrap="nowrap"scope="row"> Дата Рег № </th>
-      <th scope="row"> Инн </th>
-      <th scope="row"> Организация </th>
-      <th nowrap="nowrap" scope="row"> Рег № СКИ </th>
-      <th scope="row"> Дата СКИ </th>
-      <th scope="row"> VPN </th>
-      <th scope="row"> Акт </th>
-      <th nowrap="nowrap" scope="row"> Кол-во</th>
-      <th scope="row"> Примечание </th>
+    <thead class="table-dark align-middle">
+      <th class="p-2" nowrap="nowrap" scope="row"> Рег № </th>
+      <th class="p-2" nowrap="nowrap"scope="row"> Дата Рег № </th>
+      <th class="p-2" scope="row"> Инн </th>
+      <th class="p-2" scope="row"> Организация </th>
+      <th class="p-2" nowrap="nowrap" scope="row"> Рег № СКИ </th>
+      <th class="p-2" nowrap="nowrap" scope="row"> Дата СКИ </th>
+      <th class="p-2" scope="row"> VPN </th>
+      <th class="p-2" scope="row"> Акт </th>
+      <th class="p-2" nowrap="nowrap" scope="row"> Кол-во</th>
+      <th class="p-2" scope="row"> Примечание </th>
     </thead>
     <tbody>
     {% for vpn in page %}
@@ -32,7 +34,7 @@
         <td> {{ vpn.organisation.reg_number }} </td>
         <td> {{ vpn.organisation.reg_date| date:"d.m.Y" }} </td>
         <td> {{ vpn.organisation.inn }} </td>
-        <td> {{ vpn.organisation.short_name }} </td>
+        <td class="col-xl-4"> {{ vpn.organisation.short_name }} </td>
         <td> {{ vpn.reg_number }} </td>
         <td> {{ vpn.reg_date | date:"d.m.Y" }} </td>
         <td nowrap="nowrap"> VPN-{{ vpn.vpn_number }}</td>
@@ -45,4 +47,4 @@
     </table>
   </div>
   
-{% endblock %} 
+{% endblock %}

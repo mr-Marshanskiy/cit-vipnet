@@ -24,7 +24,7 @@
   <h5>Дистрибутивы ключей</h5>
   <div class="container" >
     <table class=" table table-sm text-center table-bordered table-hover">
-      <thead "thead-dark">
+      <thead class="thead-light">
         <th> Сеть </th>
         <th> VPN </th>
         <th nowrap="nowrap"> Рег № </th>
@@ -48,20 +48,20 @@
         <td> {{ key.active | yesno:"Да,-"}} </td>
         <td>
           {% if key.license %}
-            <a href={% url 'single_device' key.device_type.id %> {{ key.device_type.type }} </a>
+            <a href="{% url 'single_device' key.device_type.id %}"> {{ key.device_type.type }} </a>
           {% endif %}
         </td>
         <td class="td-width"> {{ key.device_id}} </td>
         <td>
           {% if key.license %}
-            <a href={% url 'single_act' key.license.id %> {{ key.license.act }} </a>
+            <a href="{% url 'single_act' key.license.id %}"> {{ key.license.act }} </a>
           {% endif %}
         </td>
         <td> {{ key.license.date | date:"d.m.Y" }} </td>
         <td> {{ key.license.amount }} </td>
         <td> 
           {% if key.license %}
-            <a href={% url 'single_seller' key.license.distributor.id %> {{ key.license.distributor.name }} </a>
+            <a href="{% url 'single_seller' key.license.distributor.id %}"> {{ key.license.distributor.name }} </a>
           {% endif %}
         </td>
         <td> {{ key.comment }} </td>

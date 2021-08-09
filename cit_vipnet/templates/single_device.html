@@ -5,7 +5,7 @@
 <div class="container">
   <h5>СКИ, выданная на {{ device.type }}. Итого: {{ vpn.count }}</h5>
     <table class="table table-sm text-center table-bordered table-hover"> 
-      <thead "thead-dark"> 
+      <thead class="thead-light">
         <th> Сеть </th>
         <th> Инн </th>
         <th> Организация </th>
@@ -21,7 +21,7 @@
       <tr>
         <td> {{ key.network }} </td>
         <td>
-          <a href={% url 'single_org' key.organisation.inn %}> {{ key.organisation.inn }} </a>
+          <a href="{% url 'single_org' key.organisation.inn %}"> {{ key.organisation.inn }} </a>
         </td>
         <td> {{ key.organisation.short_name }} </td>
         <td> {{ key.reg_number }} </td>
@@ -29,7 +29,7 @@
         <td nowrap="nowrap"> VPN-{{ key.vpn_number }} </td>
         <td > 
           {% if key.license %}
-          <a href={% url 'single_act' key.license.id %> {{ key.license.act }}</a>
+          <a href="{% url 'single_act' key.license.id %}"> {{ key.license.act }}</a>
           {% endif %}
         </td>
         <td> {% if key.license.amount %} {{ key.license.amount }} шт. {% endif %}</td>
