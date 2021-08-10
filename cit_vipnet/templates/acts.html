@@ -3,16 +3,10 @@
 {% block header %} Список актов П/П прав на ПО ViPNet {% endblock %}
 {% block content %} 
 <div class="container">
-  <form class="form-inline" action="{% url 'acts' %}" method="get">
-    <div class="row justify-content-md-center">
-      <div class="col col-lg-3">
-        <input class="form-control" name="q" type="text" placeholder="Поиск совпадений...">
-      </div>
-      <div class="col col-lg-1">
-        <button type="submit" class="btn btn-primary mb-2">Фильтровать</button>
-      </div>
-    </div>
-  </form>
+  {% include "includes/search.html" with view='acts' %}
+  {% if page_obj.has_other_pages %}
+  {% include "includes/paginator.html" with page=page_obj paginator=paginator%}
+  {% endif %}
   <table class="table table-sm text-center table-bordered table-hover">
     <thead class="table-dark align-middle">
       <th class="p-2" > № Акта </th>
@@ -23,7 +17,7 @@
       <th class="p-2" scope="row"> Коммент </th>
     </thead>
     <tbody>
-    {% for lic in page %}
+    {% for lic in page_obj %}
       <tr>
         <td>
           <a href="{% url 'single_act' lic.id %}"> {{ lic.act }}  </a>
@@ -35,14 +29,17 @@
           {% endif %}
         </td>
         <td> {{ lic.amount }} шт.</td>
-        <td class="{% if lic.lics.count > lic.amount %}bg-danger
-                  {% elif lic.lics.count < lic.amount %}bg-success{% endif %}">
-          {{ lic.lics.count }} шт.
+        <td class="{% if lic.used_count > lic.amount %}bg-danger
+                  {% elif lic.used_count < lic.amount %}bg-success{% endif %}">
+          {{ lic.used_count }} шт.
         </td>
         <td class="col-xl-4"> {{ lic.comment }} </td>
       </tr>
     {% endfor %}
     </tbody>
   </table>
+  {% if page_obj.has_other_pages %}
+  {% include "includes/paginator.html" with page=page_obj paginator=paginator%}
+  {% endif %}
   </div>
 {% endblock %} 

@@ -8,7 +8,11 @@ from django.http import Http404
 from django.views.generic.edit import DeletionMixin, FormMixin
 
 from django.views.generic import ListView, DetailView, DeleteView
+from django.views.generic.detail import SingleObjectMixin
 
+
+'''
+Функция заменена IndexListView
 def index(request):
     query = request.GET.get('q')
     if not query:
@@ -27,6 +31,7 @@ def index(request):
         }
      )
 
+Функция заменена OrganisationListView
 def orgs(request):
     query = request.GET.get('q')
     if not query:
@@ -45,22 +50,7 @@ def orgs(request):
         }
     )
 
-def acts(request):
-    query = request.GET.get('q')
-    if not query:
-        query = ''
-    page = License.objects.prefetch_related().filter(
-        Q(act__icontains=query) | 
-        Q(distributor__name__icontains=query)
-    ).order_by('-date')
-
-    return render(
-        request,
-        'acts.html',
-        {
-            'page': page,
-        }
-    )
+# Функция заменена OrganisationSingle
 
 def single_org(request, inn):
     org = Organisation.objects.prefetch_related().get(inn=inn)
@@ -74,17 +64,102 @@ def single_org(request, inn):
         }
     )
 
-def single_act(request, pk):
-    lic = License.objects.prefetch_related().get(id=pk)
-    vpn = lic.lics.all().order_by('network', 'organisation', 'vpn_number', )
+
+# Функция заменена LicenseListView
+
+def acts(request):
+    query = request.GET.get('q')
+    if not query:
+        query = ''
+    page = License.objects.prefetch_related().filter(
+        Q(act__icontains=query) |
+        Q(distributor__name__icontains=query)
+    ).order_by('-date')
+
     return render(
         request,
-        'single_act.html',
+        'acts.html',
         {
-            'vpn': vpn,
-            'lic': lic,
+            'page': page,
         }
     )
+'''
+
+class IndexListView(ListView):
+    paginate_by = 100
+    model = Vpn
+    template_name = 'index.html'
+
+    def get_queryset(self, *args, **kwargs):
+        query = self.request.GET.get('q')
+        if not query:
+            queryset = Vpn.objects.all().select_related().order_by(
+                '-reg_date', '-reg_number')
+            return queryset
+        queryset = Vpn.objects.filter(
+            Q(organisation__inn__icontains=query) |
+            Q(license__act__icontains=query) |
+            Q(organisation__full_name__icontains=query) |
+            Q(organisation__short_name__icontains=query)
+        ).select_related().order_by('-reg_date', '-reg_number')
+        return queryset
+
+
+class OrganisationListView(ListView):
+    paginate_by = 100
+    model = Organisation
+    template_name = 'organisations.html'
+
+    def get_queryset(self, *args, **kwargs):
+        query = self.request.GET.get('q')
+        if not query:
+            queryset = Organisation.objects.all().annotate(vpn_count=Count(
+                'orgs__vpn_number', distinct=True)).order_by('-reg_number')
+            return queryset
+        queryset = Organisation.objects.prefetch_related().filter(
+            Q(inn__icontains=query) | Q(full_name__icontains=query) |
+            Q(short_name__icontains=query)).annotate(
+            vpn_count=Count('orgs__vpn_number', distinct=True)
+        ).order_by('-reg_number')
+        return queryset
+
+
+class LicenseListView(ListView):
+    paginate_by = 100
+    model = License
+    template_name = 'acts.html'
+
+    def get_queryset(self, *args, **kwargs):
+        query = self.request.GET.get('q')
+        if not query:
+            queryset = License.objects.prefetch_related(
+                ).annotate(used_count=Count('lics')).order_by('-date')
+            return queryset
+        queryset = License.objects.prefetch_related().filter(
+            Q(act__icontains=query) |
+            Q(distributor__name__icontains=query)
+        ).annotate(used_count=Count('lics')).order_by('-date')
+        return queryset
+
+# Данные об организации со списком выданной СКИ
+class OrganisationSingleView(SingleObjectMixin, ListView):
+    paginate_by = 10
+    template_name = 'single_org.html'
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object(queryset=Organisation.objects.all())
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['org'] = self.object
+        context['vpn'] = self.objects
+        return context
+
+    def get_queryset(self):
+        self.objects = self.object.orgs.all().order_by('network', 'vpn_number', '-reg_date', '-reg_number')
+        return self.objects
+
 
 
 class FormListView(FormMixin, ListView):
@@ -142,17 +217,6 @@ class DistributorDeleteView(DeleteView):
         return self.delete(*a, **kw)
 
 
-class DevicesListView(FormListView):
-    form_class = DeviceForm
-    model = Device
-    context_object_name = 'page'
-    queryset = Device.objects.all().annotate(
-        device_count=Count('devices')
-    ).order_by('-device_count')
-    success_url = reverse_lazy('devices')
-    template_name = 'devices.html'
-
-
 class DistributorDetailView(DetailView):
     model = Distributor
     context_object_name = 'seller'
@@ -164,6 +228,45 @@ class DistributorDetailView(DetailView):
         return context
 
 
+class DevicesListView(FormListView):
+    form_class = DeviceForm
+    model = Device
+    context_object_name = 'page'
+    queryset = Device.objects.all().annotate(
+        device_count=Count('devices')
+    ).order_by('-device_count')
+    success_url = reverse_lazy('devices')
+    template_name = 'devices.html'
+
+
+class DeviceListForDeleteView(ListView):
+    model = Device
+    context_object_name = 'page'
+    template_name = 'delete_devices.html'
+
+    def get_queryset(self, *args, **kwargs):
+        success_url = reverse_lazy('devices')
+        query = self.request.GET.get('q')
+        if not query:
+            queryset = Device.objects.all().annotate(
+                device_count=Count('devices')
+            ).order_by('-device_count')
+            return queryset
+        queryset = Device.objects.filter(
+            type__icontains=query).annotate(
+            device_count=Count('devices')
+        ).order_by('-device_count')
+        return queryset
+
+
+class DevicesDeleteView(DeleteView):
+    model = Device
+    success_url = reverse_lazy('deleting_list_devices')
+
+    def get(self, *a, **kw):
+        return self.delete(*a, **kw)
+
+
 class DevicesDetailView(DetailView):
     model = Device
     context_object_name = 'device'
@@ -173,3 +276,34 @@ class DevicesDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['vpn'] = Vpn.objects.filter(device_type=self.object).order_by('-reg_date')
         return context
+
+
+def single_act(request, pk):
+    lic = License.objects.prefetch_related().get(id=pk)
+    vpn = lic.lics.all().order_by('network', 'organisation', 'vpn_number', )
+    return render(
+        request,
+        'single_act.html',
+        {
+            'vpn': vpn,
+            'lic': lic,
+        }
+    )
+
+
+class LicenseSingleView(SingleObjectMixin, ListView):
+    template_name = 'single_act.html'
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object(queryset=License.objects.all())
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['lic'] = self.object
+        context['vpn'] = self.objects
+        return context
+
+    def get_queryset(self):
+        self.objects = self.object.lics.all().order_by('network', 'vpn_number', '-reg_date', '-reg_number')
+        return self.objects

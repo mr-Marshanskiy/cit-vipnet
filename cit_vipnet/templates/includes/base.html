@@ -10,11 +10,11 @@
         <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
         <script src="{% static 'bootstrap/css/bootstrap.js' %}"></script>
     </head>
-    <body>
+    <body class="bg-light">
         {% include 'includes/nav.html' %}   
         <main>
             <div class="text-center">
-                <h1>{% block header %}База данных ViPNet{% endblock %}</h1>
+                <h1 class="display-5 fw-normal">{% block header %}База данных ViPNet{% endblock %}</h1>
                 {% block content %}
                 <!-- Содержимое страницы -->
                 {% endblock %}
