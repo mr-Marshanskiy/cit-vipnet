@@ -18,14 +18,23 @@
           </b> из {{lic.amount}} шт.</p>
         {% endif %}
         {% if lic.comment %} <p class="lea mb-1"> {{ lic.comment }}</p> {% endif %}
+        <div>
+          <a class="link-danger" href="{% url 'delete_act' lic.pk %}">
+             Удалить все сведения об акте </a>
+        </div>
       </div>
       <div class="col-6 text-end px-5 border-end">
       <h1 class="display-5 fw-bold">{{ lic.act }}</h1>
         <p class="lead mb-2">от <b>{{ lic.date }}</b></p>
         <p class="lead mb-2">дистрибьютор
-          <b> <a class="link-warning" href="{% url 'single_org' lic.distributor.pk %}">
+          {% if lic.distributor %}
+                    <b> <a class="link-warning" href="{% url 'single_org' lic.distributor.pk %}">
               {{ lic.distributor.name }}</a></b>
         </p>
+          {% else %}
+                    отсутствует
+          {% endif %}
+
         <p class="lead mb-2">Лицензий по акту - <b>{{ lic.amount }} шт.</b></p>
 
       </div>

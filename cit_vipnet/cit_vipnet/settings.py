@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'events',
     'pars',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -102,8 +103,14 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/2.2/topics/i18n/
+DATE_INPUT_FORMATS = [
+    '%d.%m.%y',
+    '%d:%m:%y %H:%M',
+    '%d.%m.%y %H.%M',
+    '%d/%m/%y %H:%M',        # '10/25/06 14:30'
+    '%d/%m/%y %H.%M',
+    '%d/%m/%y',              # '10/25/06'
+]
 
 LANGUAGE_CODE = 'ru-RU'
 
@@ -121,4 +128,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, "static") 
+STATIC_ROOT = os.path.join(BASE_DIR, "static")

@@ -35,7 +35,11 @@
         <td class="col-sm-1 text-truncate" style="max-width: 250px;">
           {% if vpn.device_id %} {{ vpn.device_id }} {% endif %}
         </td>
-        <td class="col-sm-1"> {{ vpn.license.act }} </td>
+        <td class="col-sm-1">
+          {% if vpn.license.act %}
+            <a href="{% url 'single_act' vpn.license.pk %}">{{ vpn.license.act }} </a>
+          {% endif %}
+        </td>
         <td nowrap="nowrap">
           {% if vpn.license.amount %} {{ vpn.license.amount }} шт. {% endif %}
         </td>

@@ -1,13 +1,15 @@
 from django.urls.base import reverse_lazy
-from .forms import DistributorForm, DeviceForm
+from .forms import DistributorForm, DeviceForm, VpnForm, OrganisationForm
+import datetime
+from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Device, Distributor, License, Vpn, Organisation
+from .models import Device, Distributor, License, Vpn, Organisation, Network
 from django.db.models import Q, Count
 from django.http import Http404
 from django.views.generic.edit import DeletionMixin, FormMixin
 
-from django.views.generic import ListView, DetailView, DeleteView
+from django.views.generic import ListView, DetailView, DeleteView, CreateView
 from django.views.generic.detail import SingleObjectMixin
 
 
@@ -181,7 +183,7 @@ class DistributorListView(FormListView):
     form_class = DistributorForm
     model = Distributor
     context_object_name = 'page'
-    queryset = Distributor.objects.all().annotate(
+    queryset = Distributor.objects.prefetch_related().annotate(
         lic_count=Count('distributors')
     ).order_by('-lic_count')
     success_url = reverse_lazy('sellers')
@@ -195,12 +197,12 @@ class DistributorListForDeleteView(ListView):
     def get_queryset(self, *args, **kwargs):
         query = self.request.GET.get('q')
         if not query:
-            queryset = Distributor.objects.all().annotate(
+            queryset = Distributor.objects.prefetch_related().annotate(
                 lic_count=Count('distributors')
             ).order_by('-lic_count')
             success_url = reverse_lazy('sellers')
             return queryset
-        queryset = Distributor.objects.filter(
+        queryset = Distributor.objects.prefetch_related().filter(
             Q(name__icontains=query) |
             Q(address__icontains=query)
         ).annotate(
@@ -307,3 +309,85 @@ class LicenseSingleView(SingleObjectMixin, ListView):
     def get_queryset(self):
         self.objects = self.object.lics.all().order_by('network', 'vpn_number', '-reg_date', '-reg_number')
         return self.objects
+
+
+class CreateOrgView(CreateView):
+    form_class = OrganisationForm
+    template_name = 'new/new_org.html'
+    success_url = reverse_lazy('orgs')
+
+
+class CreateVpnView(CreateView):
+    form_class = VpnForm
+    template_name = 'new/new_vpn.html'
+    success_url = reverse_lazy('index')
+
+    today = datetime.date.today()
+    last_reg_n = Vpn.objects.first()
+    try:
+        last_reg_n.reg_number = str(int(last_reg_n.reg_number) + 1)
+    except:
+        pass
+    try:
+        network = Network.objects.get(number='1760')
+    except:
+        network = Network.objects.first()
+    try:
+        device = Device.objects.get(type='USB')
+    except:
+        device = Device.objects.first()
+    initial = {
+        'reg_number': last_reg_n.reg_number,
+        'reg_date': today,
+        'network': network,
+        'device_type': device,
+        'license_date': today,
+        'license_amount': 1,
+        'vpn_number': 0,
+    }
+
+    def get_initial(self):
+        init = super(CreateVpnView, self).get_initial()
+        try:
+            vpn_number = Vpn.objects.filter(organisation__pk=self.kwargs.get(
+                'pk')).order_by('-vpn_number').first().vpn_number
+            vpn_number += 1
+        except:
+            vpn_number = 0
+        self.initial['vpn_number'] = vpn_number
+        return init
+
+
+    def form_valid(self, form):
+        form.instance.organisation = Organisation.objects.get(
+            pk=self.kwargs.get('pk'))
+        lic_act = form.data.get('license_act')
+        lic_date = form.data.get('license_date')
+        lic_distr = form.data.get('license_ distributor')
+        lic_amount = form.data.get('license_amount')
+        date_clean = datetime.datetime.strptime(lic_date, '%d.%m.%Y')
+        lic, created = License.objects.get_or_create(
+            act=lic_act, date=date_clean, distributor=lic_distr, amount=lic_amount)
+        form.instance.license = lic
+        return super(CreateVpnView, self).form_valid(form)
+
+
+class SingleLicenseDeleteView(DeleteView):
+    model = License
+    success_url = reverse_lazy('index')
+    template_name = 'confirm_deleting.html'
+
+
+class OrgListVpnDeleteView(DeleteView):
+    model = Vpn
+    template_name = 'confirm_deleting.html'
+
+    def get_success_url(self):
+        org_id = self.object.organisation.id
+        return reverse_lazy('single_org', kwargs={'pk': org_id})
+
+
+class OrganisationDeleteView(DeleteView):
+    model = Organisation
+    success_url = reverse_lazy('index')
+    template_name = 'confirm_deleting.html'

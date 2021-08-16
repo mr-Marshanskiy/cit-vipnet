@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
+SIMPLE_AUTOCOMPLETE = {'events.organisation': {'search_field': 'inn'}}
 
 class Distributor(models.Model):
     name = models.CharField(

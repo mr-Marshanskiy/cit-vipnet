@@ -1,0 +1,13 @@
+{% extends "includes/base.html" %}
+{% block title %}Удаление {% endblock %}
+<h1>{% block header %}Удаление объекта{% endblock %}</h1>
+{% block content %}
+<form action="" method="post">{% csrf_token %}
+    <p class="lead">Вы действительно хотите удалитьследующий объект?</p>
+    <p class="lead">Объект удаления: {{ object }}</p>
+    {% for field in object.fields %}
+    field
+    {% endfor %}
+    <input class="btn btn-danger" type="submit" value="Удалить" />
+</form>
+{% endblock %}

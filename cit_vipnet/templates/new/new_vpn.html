@@ -1,0 +1,94 @@
+{% extends "includes/base.html" %}
+{% block title %}
+{% if post %}
+Изменить данные
+{% else %}
+Новая организация
+{% endif %}
+{% endblock %}
+{% block content %}
+{% load form_filters %}
+<div class="container text-center">
+  <div class="row">
+    <div class="">
+      <form method="post">
+      {% csrf_token %}
+      <div class="card-header">
+        {% if post %}
+        Изменить
+        {% else %}
+        Добавить СКИ
+        {% endif %}
+      </div>
+      <div class="row">
+        <div class="col-2">
+          <p class="text-center mb-1">{{ form.network.label }}</p>
+          {{ form.network |addclass:"form-control text-center" }}
+        </div>
+        <div class="col-2">
+          <p class="text-center mb-1">{{ form.reg_number.label }}</p>
+          {{ form.reg_number |addclass:"form-control text-center" }}
+        </div>
+        <div class="col-2">
+          <p class="text-center mb-1">{{ form.reg_date.label }}</p>
+          {{ form.reg_date |addclass:"form-control text-center" }}
+        </div>
+        <div class="col-2">
+          <p class="text-center mb-1">{{ form.vpn_number.label }}</p>
+          {{ form.vpn_number |addclass:"form-control text-center" }}
+        </div>
+      </div>
+      <hr>
+      <div class="text-center">
+        <div class="row text-center">
+          <div class="col-2">
+            <p class="text-center mb-1">{{ form.device_type.label }}</p>
+            {{ form.device_type |addclass:"form-control text-center" }}
+          </div>
+          <div class="col-3">
+            <p class="text-center mb-1">{{ form.device_id.label }}</p>
+            {{ form.device_id |addclass:"form-control text-center" }}
+          </div>
+        </div>
+
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-2">
+          <p class="text-center mb-1">{{ form.license_act.label }}</p>
+          {{ form.license_act |addclass:"form-control text-center " }}
+        </div>
+        <div class="col-2">
+          <p class="text-center mb-1">{{ form.license_date.label }}</p>
+          {{ form.license_date |addclass:"form-control text-center" }}
+        </div>
+        <div class="col-2">
+          <p class="text-center mb-1">{{ form.license_amount.label }}</p>
+          {{ form.license_amount |addclass:"form-control text-center" }}
+        </div>
+        <div class="col-3">
+          <p class="text-center mb-1">{{ form.license_distributor.label }}</p>
+          {{ form.license_distributor |addclass:"form-control text-center" }}
+        </div>
+      </div>
+      <div class="col-md-12  pt-2 pb-2 text-start">
+        <button type="submit" class="btn btn-primary">
+          {% if post %}
+          Редактировать запись
+          {% else %}
+          Добавить запись
+          {% endif %}
+        </button>
+      </div>
+      </form>
+      {% for err in form.errors %}
+      {{ err }}
+      {% endfor %}
+    </div>
+    <!-- card body -->
+  </div>
+  <!-- card -->
+</div>
+<!-- col -->
+</div> <!-- row -->
+{% endblock %}
