@@ -22,6 +22,11 @@
           <a class="link-danger" href="{% url 'delete_act' lic.pk %}">
              Удалить все сведения об акте </a>
         </div>
+        <div>
+          <a class="link-primary" href="{% url 'update_act' lic.pk %}">
+             Изменить акт </a>
+        </div>
+
       </div>
       <div class="col-6 text-end px-5 border-end">
       <h1 class="display-5 fw-bold">{{ lic.act }}</h1>

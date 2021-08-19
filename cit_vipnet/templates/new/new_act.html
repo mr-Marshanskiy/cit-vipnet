@@ -1,0 +1,81 @@
+{% extends "includes/base.html" %}
+{% block title %}
+Акт приема-передачи
+{% endblock %}
+{% block header%}Акт приема-передачи{% endblock %}
+{% block content %}
+{% load form_filters %}
+<div class="container text-center d-flex justify-content-center pt-2">
+  <div class="row col-6 border m-0">
+    <div class="">
+      <form method="post">
+      {% csrf_token %}
+      <div class="card-header">
+        <h5 class=" fw-bold lead"> Заполните данные об Акте приема-передачи </h5>
+      </div>
+        <table class="d-flex justify-content-center">
+          <tr>
+            <td class="text-start">
+                <p class="col-form-label lead fw-bold">{{ form.act.label }}</p>
+            </td>
+            <td class="p-2">
+                {{ form.act |addclass:"form-control text-center" }}
+            </td>
+          </tr>
+          <tr>
+            <td class="text-start">
+                <label class="col-form-label lead fw-bold">{{ form.date.label }}</label>
+            </td>
+            <td  class="p-2">
+                {{ form.date |addclass:"form-control text-center" }}
+            </td>
+          </tr>
+          <tr>
+            <td class="text-start">
+                <label class="col-form-label lead fw-bold">{{ form.distributor.label }}</label>
+            </td>
+            <td class="p-2">
+                {{ form.distributor |addclass:"form-control text-center" }}
+            </td>
+          </tr>
+          <tr>
+            <td class="text-start">
+                <label class="col-form-label lead fw-bold">{{ form.amount.label }}</label>
+            </td>
+            <td class="p-2">
+                {{ form.amount |addclass:"form-control text-center" }}
+            </td>
+          </tr>
+          <tr>
+            <td class="text-start">
+                <label class="col-form-label lead fw-bold">{{ form.comment.label }}</label>
+            </td>
+            <td class="p-2">
+                {{ form.comment |addclass:"form-control text-center" }}
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td class="p-2">
+               <button type="submit" class="btn btn-primary">
+                  Сохранить данные
+               </button>
+            </td>
+          </tr>
+        </table>
+
+      <div class="col-md-12  pt-2 pb-2 text-start">
+
+      </div>
+      </form>
+      {% for err in form.errors %}
+      {{ err }}
+      {% endfor %}
+    </div>
+    <!-- card body -->
+  </div>
+  <!-- card -->
+</div>
+<!-- col -->
+</div> <!-- row -->
+{% endblock %}

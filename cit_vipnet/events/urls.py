@@ -14,6 +14,7 @@ urlpatterns = [
 
     path('acts/', views.LicenseListView.as_view(), name='acts'),
     path('acts/<int:pk>/', views.LicenseSingleView.as_view(), name='single_act'),
+    path('acts/<int:pk>/update/', views.LicenseUpdateView.as_view(), name='update_act'),
     path('acts/<int:pk>/delete/', views.LicenseSingleDeleteView.as_view(), name='delete_act'),
 
     path('sellers/', views.DistributorListView.as_view(), name='sellers'),

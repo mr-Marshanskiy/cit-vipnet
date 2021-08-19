@@ -1,6 +1,6 @@
 from django.conf import settings
 from django import forms
-from .models import Distributor, Device, Vpn, Organisation
+from .models import Distributor, Device, Vpn, Organisation, License
 from django.utils.translation import ugettext_lazy as _
 
 class DistributorForm(forms.ModelForm):
@@ -15,6 +15,10 @@ class DeviceForm(forms.ModelForm):
         fields = '__all__'
 
 
+class LicenseForm(forms.ModelForm):
+    class Meta:
+        model = License
+        fields = '__all__'
 class OrganisationForm(forms.ModelForm):
     class Meta:
         model = Organisation

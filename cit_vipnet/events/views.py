@@ -1,5 +1,5 @@
 from django.urls.base import reverse_lazy
-from .forms import DistributorForm, DeviceForm, VpnForm, OrganisationForm
+from .forms import DistributorForm, DeviceForm, VpnForm, OrganisationForm, LicenseForm
 import datetime
 
 from django.shortcuts import render, get_object_or_404, redirect
@@ -26,6 +26,9 @@ class FormListView(FormMixin, ListView):
         return super().form_valid(form)
 
 
+''' ГЛАВНАЯ СТРАНИЦА '''
+
+
 class IndexListView(ListView):
     paginate_by = 100
     model = Vpn
@@ -39,12 +42,16 @@ class IndexListView(ListView):
                 '-reg_date', '-reg_number')
             return queryset
         queryset = Vpn.objects.filter(
-            Q(organisation__inn__icontains=query) |
-            Q(license__act__icontains=query) |
-            Q(organisation__full_name__icontains=query) |
-            Q(organisation__short_name__icontains=query)
+            Q(organisation__inn__icontains=query) | #ИНН организации
+            Q(license__act__icontains=query) | #Название акта П/П
+            Q(organisation__full_name__icontains=query) | #Полное наз-е орг-ции
+            Q(organisation__short_name__icontains=query) | #Краткое наз-е орг-ции
+            Q(device_id__icontains=query) #ID носителя
         ).select_related().order_by('-reg_date', '-reg_number')
         return queryset
+
+
+''' ОРГАНИЗАЦИЯ '''
 
 
 class OrganisationListView(ListView):
@@ -130,6 +137,9 @@ class OrganisationUpdateView(UpdateView):
         return reverse_lazy('single_org', kwargs={'pk': self.object.pk})
 
 
+''' ДИСТРИБЬЮТОР '''
+
+
 class DistributorListView(FormListView):
     template_name = 'distributors.html'
     form_class = DistributorForm
@@ -182,6 +192,9 @@ class DistributorDetailView(DetailView):
         return context
 
 
+''' УСТРОЙСТВА '''
+
+
 class DevicesListView(FormListView):
     form_class = DeviceForm
     model = Device
@@ -232,6 +245,9 @@ class DevicesDetailView(DetailView):
         return context
 
 
+''' ЛИЦЕНЗИИ '''
+
+
 class LicenseListView(ListView):
     paginate_by = 100
     model = License
@@ -272,6 +288,19 @@ class LicenseSingleDeleteView(DeleteView):
     model = License
     success_url = reverse_lazy('index')
     template_name = 'confirm_deleting.html'
+
+
+class LicenseUpdateView(UpdateView):
+
+    model = License
+    form_class = LicenseForm
+    template_name = 'new/new_act.html'
+
+    def get_success_url(self):
+        return reverse_lazy('single_act', kwargs={'pk': self.object.pk})
+
+
+''' VPN '''
 
 
 class VpnCreateView(CreateView):
