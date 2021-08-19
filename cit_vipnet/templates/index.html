@@ -6,9 +6,18 @@
   {% include "includes/search.html" with view='index' %}
 </div>
 <div class="container-fluid">
+  <div class="d-flex flex-row">
   {% if page_obj.has_other_pages %}
-  {% include "includes/paginator.html" with page=page_obj paginator=paginator%}
+   <div class="p-2">
+    {% include "includes/paginator.html" with page=page_obj paginator=paginator%}
+   </div>
   {% endif %}
+    <div class="p-2">
+      <button type="submit" class="btn btn-success" onclick="location.href='{% url 'new_org' %}'">
+        Добавить организацию
+      </button>
+    </div>
+  </div>
   <table class="table table-sm text-center table-bordered table-hover">
     <thead class="table-dark align-middle">
       <th class="p-2" nowrap="nowrap" scope="row"> Рег № СКИ </th>

@@ -99,7 +99,7 @@ class Organisation(models.Model):
         null=True,
         verbose_name=u'Адрес организации',)
     phone = models.CharField(
-        max_length=15,
+        max_length=20,
         blank=True,
         null=True,
         verbose_name=u"Номер телефона",)

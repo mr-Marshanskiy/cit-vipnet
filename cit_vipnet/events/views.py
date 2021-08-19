@@ -1,91 +1,30 @@
 from django.urls.base import reverse_lazy
 from .forms import DistributorForm, DeviceForm, VpnForm, OrganisationForm
 import datetime
-from django.conf import settings
-from django.utils.translation import ugettext as _
+
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Device, Distributor, License, Vpn, Organisation, Network
 from django.db.models import Q, Count
-from django.http import Http404
-from django.views.generic.edit import DeletionMixin, FormMixin
 
-from django.views.generic import ListView, DetailView, DeleteView, CreateView
+from django.views.generic.edit import FormMixin
+
+from django.views.generic import ListView, DetailView, DeleteView, CreateView, UpdateView
 from django.views.generic.detail import SingleObjectMixin
 
 
-'''
-Функция заменена IndexListView
-def index(request):
-    query = request.GET.get('q')
-    if not query:
-        query = ''
-    page = Vpn.objects.filter(
-        Q(organisation__inn__icontains=query) | 
-        Q(license__act__icontains=query) | 
-        Q(organisation__full_name__icontains=query) |
-        Q(organisation__short_name__icontains=query)
-    ).select_related()
-    return render(
-        request,
-        'index.html',
-        {
-            'page': page,
-        }
-     )
+class FormListView(FormMixin, ListView):
+    def post(self, request, *args, **kwargs):
+        """ Обработка POST при использовани FormMixin в DetailView """
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
-Функция заменена OrganisationListView
-def orgs(request):
-    query = request.GET.get('q')
-    if not query:
-        query = ''
-    page = Organisation.objects.prefetch_related().filter(
-        Q(inn__icontains=query) | 
-        Q(full_name__icontains=query) |
-        Q(short_name__icontains=query)
-    ).annotate(vpn_count=Count('orgs__vpn_number', distinct=True))
-    
-    return render(
-        request,
-        'organisations.html',
-        {
-            'page': page,
-        }
-    )
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
 
-# Функция заменена OrganisationSingle
-
-def single_org(request, inn):
-    org = Organisation.objects.prefetch_related().get(inn=inn)
-    vpn = org.orgs.all().order_by('network', 'vpn_number', '-reg_date', '-reg_number')
-    return render(
-        request,
-        'single_org.html',
-        {
-            'vpn': vpn,
-            'org': org,
-        }
-    )
-
-
-# Функция заменена LicenseListView
-
-def acts(request):
-    query = request.GET.get('q')
-    if not query:
-        query = ''
-    page = License.objects.prefetch_related().filter(
-        Q(act__icontains=query) |
-        Q(distributor__name__icontains=query)
-    ).order_by('-date')
-
-    return render(
-        request,
-        'acts.html',
-        {
-            'page': page,
-        }
-    )
-'''
 
 class IndexListView(ListView):
     paginate_by = 100
@@ -94,6 +33,7 @@ class IndexListView(ListView):
 
     def get_queryset(self, *args, **kwargs):
         query = self.request.GET.get('q')
+        filter
         if not query:
             queryset = Vpn.objects.all().select_related().order_by(
                 '-reg_date', '-reg_number')
@@ -126,23 +66,6 @@ class OrganisationListView(ListView):
         return queryset
 
 
-class LicenseListView(ListView):
-    paginate_by = 100
-    model = License
-    template_name = 'acts.html'
-
-    def get_queryset(self, *args, **kwargs):
-        query = self.request.GET.get('q')
-        if not query:
-            queryset = License.objects.prefetch_related(
-                ).annotate(used_count=Count('lics')).order_by('-date')
-            return queryset
-        queryset = License.objects.prefetch_related().filter(
-            Q(act__icontains=query) |
-            Q(distributor__name__icontains=query)
-        ).annotate(used_count=Count('lics')).order_by('-date')
-        return queryset
-
 # Данные об организации со списком выданной СКИ
 class OrganisationSingleView(SingleObjectMixin, ListView):
     paginate_by = 10
@@ -163,19 +86,48 @@ class OrganisationSingleView(SingleObjectMixin, ListView):
         return self.objects
 
 
+class OrgListVpnDeleteView(DeleteView):
+    model = Vpn
+    template_name = 'confirm_deleting.html'
 
-class FormListView(FormMixin, ListView):
-    def post(self, request, *args, **kwargs):
-        """ Обработка POST при использовани FormMixin в DetailView """
-        form = self.get_form()
-        if form.is_valid():
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
+    def get_success_url(self):
+        org_id = self.object.organisation.id
+        return reverse_lazy('single_org', kwargs={'pk': org_id})
 
-    def form_valid(self, form):
-        form.save()
-        return super().form_valid(form)
+
+class OrganisationDeleteView(DeleteView):
+    model = Organisation
+    success_url = reverse_lazy('orgs')
+    template_name = 'confirm_deleting.html'
+
+
+class OrganisationCreateView(CreateView):
+    form_class = OrganisationForm
+    template_name = 'new/new_org.html'
+
+    today = datetime.date.today()
+    last_reg_n = Organisation.objects.first()
+    try:
+        last_reg_n.reg_number = str(int(last_reg_n.reg_number) + 1)
+    except:
+        pass
+    initial = {
+        'reg_number': last_reg_n.reg_number,
+        'reg_date': today,
+    }
+
+    def get_success_url(self):
+        return reverse_lazy('single_org', kwargs={'pk': self.object.pk})
+
+
+class OrganisationUpdateView(UpdateView):
+
+    model = Organisation
+    form_class = OrganisationForm
+    template_name = 'new/new_org.html'
+
+    def get_success_url(self):
+        return reverse_lazy('single_org', kwargs={'pk': self.object.pk})
 
 
 class DistributorListView(FormListView):
@@ -280,17 +232,22 @@ class DevicesDetailView(DetailView):
         return context
 
 
-def single_act(request, pk):
-    lic = License.objects.prefetch_related().get(id=pk)
-    vpn = lic.lics.all().order_by('network', 'organisation', 'vpn_number', )
-    return render(
-        request,
-        'single_act.html',
-        {
-            'vpn': vpn,
-            'lic': lic,
-        }
-    )
+class LicenseListView(ListView):
+    paginate_by = 100
+    model = License
+    template_name = 'acts.html'
+
+    def get_queryset(self, *args, **kwargs):
+        query = self.request.GET.get('q')
+        if not query:
+            queryset = License.objects.prefetch_related(
+                ).annotate(used_count=Count('lics')).order_by('-date')
+            return queryset
+        queryset = License.objects.prefetch_related().filter(
+            Q(act__icontains=query) |
+            Q(distributor__name__icontains=query)
+        ).annotate(used_count=Count('lics')).order_by('-date')
+        return queryset
 
 
 class LicenseSingleView(SingleObjectMixin, ListView):
@@ -311,52 +268,55 @@ class LicenseSingleView(SingleObjectMixin, ListView):
         return self.objects
 
 
-class CreateOrgView(CreateView):
-    form_class = OrganisationForm
-    template_name = 'new/new_org.html'
-    success_url = reverse_lazy('orgs')
+class LicenseSingleDeleteView(DeleteView):
+    model = License
+    success_url = reverse_lazy('index')
+    template_name = 'confirm_deleting.html'
 
 
-class CreateVpnView(CreateView):
+class VpnCreateView(CreateView):
     form_class = VpnForm
     template_name = 'new/new_vpn.html'
-    success_url = reverse_lazy('index')
-
-    today = datetime.date.today()
-    last_reg_n = Vpn.objects.first()
-    try:
-        last_reg_n.reg_number = str(int(last_reg_n.reg_number) + 1)
-    except:
-        pass
-    try:
-        network = Network.objects.get(number='1760')
-    except:
-        network = Network.objects.first()
-    try:
-        device = Device.objects.get(type='USB')
-    except:
-        device = Device.objects.first()
-    initial = {
-        'reg_number': last_reg_n.reg_number,
-        'reg_date': today,
-        'network': network,
-        'device_type': device,
-        'license_date': today,
-        'license_amount': 1,
-        'vpn_number': 0,
-    }
 
     def get_initial(self):
-        init = super(CreateVpnView, self).get_initial()
+        today = datetime.date.today()
+        last_reg_n = Vpn.objects.all().order_by('-reg_date', '-reg_number').first()
+        try:
+            last_reg_n.reg_number = str(int(last_reg_n.reg_number) + 1)
+            print((last_reg_n.reg_number))
+        except:
+            pass
+        try:
+            network = Network.objects.get(number='1760')
+        except:
+            network = Network.objects.first()
+        try:
+            device = Device.objects.get(type='USB')
+        except:
+            device = Device.objects.first()
         try:
             vpn_number = Vpn.objects.filter(organisation__pk=self.kwargs.get(
                 'pk')).order_by('-vpn_number').first().vpn_number
             vpn_number += 1
         except:
             vpn_number = 0
-        self.initial['vpn_number'] = vpn_number
+
+        self.initial = {
+            'reg_number': last_reg_n.reg_number,
+            'reg_date': today,
+            'network': network,
+            'device_type': device,
+            'license_date': today,
+            'license_amount': 1,
+            'vpn_number': vpn_number,
+        }
+
+        init = super(VpnCreateView, self).get_initial()
         return init
 
+    def get_success_url(self):
+        org_id = self.object.organisation.id
+        return reverse_lazy('single_org', kwargs={'pk': org_id})
 
     def form_valid(self, form):
         form.instance.organisation = Organisation.objects.get(
@@ -369,25 +329,51 @@ class CreateVpnView(CreateView):
         lic, created = License.objects.get_or_create(
             act=lic_act, date=date_clean, distributor=lic_distr, amount=lic_amount)
         form.instance.license = lic
-        return super(CreateVpnView, self).form_valid(form)
+        return super(VpnCreateView, self).form_valid(form)
 
 
-class SingleLicenseDeleteView(DeleteView):
-    model = License
-    success_url = reverse_lazy('index')
-    template_name = 'confirm_deleting.html'
+class VpnUpdateView(UpdateView):
 
-
-class OrgListVpnDeleteView(DeleteView):
     model = Vpn
-    template_name = 'confirm_deleting.html'
+    form_class = VpnForm
+    template_name = 'new/new_vpn.html'
+
+    def form_valid(self, form):
+        lic_act = form.data.get('license_act')
+        lic_date = form.data.get('license_date')
+        lic_distr = form.data.get('license_ distributor')
+        lic_amount = form.data.get('license_amount')
+        date_clean = datetime.datetime.strptime(lic_date, '%d.%m.%Y')
+        lic, created = License.objects.get_or_create(
+            act=lic_act, date=date_clean, distributor=lic_distr, amount=lic_amount)
+        form.instance.license = lic
+        return super(VpnUpdateView, self).form_valid(form)
 
     def get_success_url(self):
         org_id = self.object.organisation.id
         return reverse_lazy('single_org', kwargs={'pk': org_id})
 
+    def get_initial(self):
 
-class OrganisationDeleteView(DeleteView):
-    model = Organisation
-    success_url = reverse_lazy('index')
-    template_name = 'confirm_deleting.html'
+        self.initial = {}
+        try:
+            self.initial['license_act'] = self.object.license.act
+        except:
+            self.initial['license_act'] = ''
+        try:
+            self.initial['license_date'] = self.object.license.date
+        except:
+            today = datetime.date.today()
+            self.initial['license_date'] = today
+        try:
+            self.initial['license_amount'] = self.object.license.amount
+        except:
+            self.initial['license_amount'] = 1
+        try:
+            self.initial['license_distributor'] = self.object.license.distributor
+        except:
+            self.initial['license_distributor'] = ''
+
+
+        init = super(VpnUpdateView, self).get_initial()
+        return init

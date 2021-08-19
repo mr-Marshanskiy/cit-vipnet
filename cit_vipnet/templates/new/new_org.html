@@ -1,46 +1,100 @@
 {% extends "includes/base.html" %}
 {% block title %}
-    {% if post %}
-        Изменить данные
-    {% else %}
-        Новая организация
-    {% endif %}
+Создание/Изменение организации
 {% endblock %}
+{% block header %} Создание/Изменение организации {% endblock %}
 {% block content %}
 {% load form_filters %}
-<div class="row justify-content-center">
-    <div class="col-md-8 p-5">
-        <div class="card">
-            <div class="card-header">
-                {% if post %}
-                    Изменить 
-                {% else %}  
-                    Добавить новую организацию
-                {% endif %}
-            </div>
-            <div class="card-body">
-                <form method="post"  enctype="multipart/form-data">
-                    {% csrf_token %}
-                    {% for field in form %}
-                    <div class="form-group row" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
-                        <label for="{{ field.id_for_label }}" class="col-md-4 col-form-label text-md-right">{{ field.label }}{% if field.field.required %}<span class="required"></span>{% endif %}</label>
-                        <div class="col-md-6 p-2">
-                            {{ field|addclass:"form-control"}}
-                        </div>
-                    </div>
-                    {% endfor %}
-                    <div class="col-md-6 offset-md-4">
-                        <button type="submit" class="btn btn-primary">
-                            {% if post %}
-                            Редактировать запись
-                            {% else %}
-                            Добавить запись
-                            {% endif %}
-                        </button>
-                    </div>
-                </form>
-        </div> <!-- card body -->
-    </div> <!-- card -->
-</div> <!-- col -->
+<div class="container text-center">
+  <div class="row">
+    <div class="">
+      <form method="post">
+      {% csrf_token %}
+      <div class="card-header">
+        {% if post %}
+        Изменить
+        {% else %}
+        Данные об организации
+        {% endif %}
+      </div>
+      <div class="row">
+        <div class="col-3">
+          <p class="text-center mb-1">{{ form.reg_number.label }}</p>
+          {{ form.reg_number |addclass:"form-control text-center" }}
+        </div>
+        <div class="col-3">
+          <p class="text-center mb-1">{{ form.reg_date.label }}</p>
+          {{ form.reg_date |addclass:"form-control text-center" }}
+        </div>
+      </div>
+      <hr>
+      <div class="text-center">
+        <div class="row text-center">
+          <div class="col-3">
+            <p class="text-center mb-1">{{ form.inn.label }}</p>
+            {{ form.inn |addclass:"form-control text-center" }}
+          </div>
+          <div class="col-3">
+            <p class="text-center mb-1">{{ form.kpp.label }}</p>
+            {{ form.kpp |addclass:"form-control text-center" }}
+          </div>
+        </div>
+      </div>
+      <div class="row col-6 pt-2">
+        <p class="text-center mb-1">{{ form.full_name.label }}</p>
+        {{ form.full_name |addclass:"form-control text-center" }}
+      </div>
+      <div class="row col-6 pt-2">
+        <p class="text-center mb-1">{{ form.short_name.label }}</p>
+        {{ form.short_name |addclass:"form-control text-center" }}
+      </div>
+
+      <div class="text-center pt-2">
+        <div class="row text-center">
+          <div class="col-2">
+            <p class="text-center mb-1">{{ form.town.label }}</p>
+            {{ form.town |addclass:"form-control text-center" }}
+          </div>
+          <div class="col-4">
+            <p class="text-center mb-1">{{ form.address.label }}</p>
+            {{ form.address |addclass:"form-control text-center" }}
+          </div>
+        </div>
+      </div>
+
+      <hr>
+      <div class="text-center">
+        <div class="row text-center">
+          <div class="col-3">
+            <p class="text-center mb-1">{{ form.employee.label }}</p>
+            {{ form.employee |addclass:"form-control text-center" }}
+          </div>
+          <div class="col-3">
+            <p class="text-center mb-1">{{ form.phone.label }}</p>
+            {{ form.phone |addclass:"form-control text-center" }}
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col-md-12  pt-3 pb-2 text-start">
+        <button type="submit" class="btn btn-primary">
+          {% if post %}
+          Редактировать запись
+          {% else %}
+          Сохранить
+          {% endif %}
+        </button>
+      </div>
+      </form>
+      {% for err in form.errors %}
+      {{ err }}
+      {% endfor %}
+    </div>
+    <!-- card body -->
+  </div>
+  <!-- card -->
+</div>
+<!-- col -->
 </div> <!-- row -->
 {% endblock %}

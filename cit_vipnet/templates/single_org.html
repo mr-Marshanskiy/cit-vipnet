@@ -20,10 +20,16 @@
         <p class=" mb-1"><b class="fw-bold">Адрес:</b> {{ org.address }}</p>
         <p class=" mb-1"><b class="fw-bold">ФИО ответственного:</b> {{ org.employee }}
         <p class=" mb-1"><b class="fw-bold">Телефон:</b> {{ org.phone }}</p>
-              <div>
+        <div class="pb-3">
+          <a class="link-primary" href="{% url 'update_org' org.pk %}">
+             Изменить организацию </a>
+        </div>
+
+        <div>
           <a class="link-danger" href="{% url 'delete_org' org.pk %}">
              Удалить все сведения об организации </a>
         </div>
+
       </div>
 
       <div class="col-6 text-end px-5 border-end">
@@ -43,7 +49,7 @@
 <div class="container-fluid" >
   <div class="row justify-content-md-center">
     <div class="col col-lg-2">
-      <button type="submit" class="btn btn-primary" onclick="location.href='{% url 'new_vpn' org.pk %}'">
+      <button type="submit" class="btn btn-success" onclick="location.href='{% url 'new_vpn' org.pk %}'">
         Добавить VPN
       </button>
     </div>
@@ -92,8 +98,10 @@
 
       </td>
       <td> {{ key.comment }} </td>
-      <td> <a class="link-danger" href="{% url 'delete_vpn_of_org' key.pk %}">
-             удалить </a>
+      <td>
+        <p class="m-0"><a class="link-primary" href="{% url 'update_vpn' key.pk %}">изменить </a></p>
+        <p class="m-0"><a class="link-danger" href="{% url 'delete_vpn_of_org' key.pk %}">удалить </a></p>
+
       </td>
     </tr>
     {% endfor %}
