@@ -352,7 +352,7 @@ class VpnCreateView(CreateView):
             pk=self.kwargs.get('pk'))
         lic_act = form.data.get('license_act')
         lic_date = form.data.get('license_date')
-        lic_distr = form.data.get('license_ distributor')
+        lic_distr = get_object_or_404(Distributor, id=form.data.get('license_distributor'))
         lic_amount = form.data.get('license_amount')
         date_clean = datetime.datetime.strptime(lic_date, '%d.%m.%Y')
         lic, created = License.objects.get_or_create(

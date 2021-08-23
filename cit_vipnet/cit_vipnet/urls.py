@@ -3,8 +3,9 @@ from django.urls import include, path
 
 urlpatterns = [
     # импорт правил из приложения events
-    path("", include("events.urls")),
+    path("", include('events.urls')),
     # импорт правил из приложения admin
-    path("admin/", admin.site.urls),
-    path('debug/', include("pars.urls")),
+    path('admin/', admin.site.urls),
+    path('debug/', include('pars.urls')),
+    path('api/', include('api.urls'))
 ] 

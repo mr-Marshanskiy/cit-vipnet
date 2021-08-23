@@ -33,7 +33,8 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'events',
     'pars',
-
+    'api',
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -103,14 +104,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-DATE_INPUT_FORMATS = [
-    '%d.%m.%y',
-    '%d:%m:%y %H:%M',
-    '%d.%m.%y %H.%M',
-    '%d/%m/%y %H:%M',        # '10/25/06 14:30'
-    '%d/%m/%y %H.%M',
-    '%d/%m/%y',              # '10/25/06'
-]
+REST_FRAMEWORK = {
+    'DATETIME_FORMAT': '%d.%m.%Y %H:%M:%S',
+    'DATE_FORMAT': '%d.%m.%Y',
+}
 
 LANGUAGE_CODE = 'ru-RU'
 

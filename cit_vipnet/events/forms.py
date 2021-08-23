@@ -34,7 +34,7 @@ class VpnForm(forms.ModelForm):
 
     class Meta:
         model = Vpn
-        fields = ['network', 'reg_number', 'reg_date', 'vpn_number',
+        fields = ['license', 'network', 'reg_number', 'reg_date', 'vpn_number',
                   'device_type', 'device_id', 'license_act', 'license_date',
                   'license_amount', 'license_distributor', 'comment']
         labels = {

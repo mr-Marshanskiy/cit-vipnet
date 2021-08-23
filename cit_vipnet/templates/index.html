@@ -3,7 +3,7 @@
 {% block header %} События {% endblock %}
 {% block content %} 
 <div class="container">
-  {% include "includes/search.html" with view='index' %}
+  {% include "includes/search.html" with view='index' search_fields='ИНН, Организация, ID устройства'%}
 </div>
 <div class="container-fluid">
   <div class="d-flex flex-row">
