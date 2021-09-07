@@ -19,6 +19,8 @@ class LicenseForm(forms.ModelForm):
     class Meta:
         model = License
         fields = '__all__'
+
+
 class OrganisationForm(forms.ModelForm):
     class Meta:
         model = Organisation
@@ -43,6 +45,7 @@ class VpnForm(forms.ModelForm):
             'license_amount': _('Кол-во лицензий'),
             'license_distributor': _('Дистрибьютор'),
         }
+
 
     def __init__(self, *args, **kwargs):
         super(VpnForm, self).__init__(*args, **kwargs)

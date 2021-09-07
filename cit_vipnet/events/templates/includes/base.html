@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>{% block title %}База данных{% endblock %} | ViPNet</title>
+        <!-- Загрузка статики -->
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+        <link rel="stylesheet" href="{% static 'main.css' %}">
+        <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
+        <script src="{% static 'bootstrap/css/bootstrap.min.js' %}"></script>
+        <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    </head>
+    <body class="bg-light">
+        {% include 'includes/nav.html' %}   
+        <main >
+            <div class="text-center">
+                <h1 class="display-5 fw-normal">{% block header %}База данных ViPNet{% endblock %}</h1>
+                {% block content %}
+                <!-- Содержимое страницы -->
+                {% endblock %}
+            </div>
+        </main>
+        {% include 'includes/footer.html' %}
+    </body>
+
+</html> 

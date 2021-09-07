@@ -1,0 +1,59 @@
+{% extends "includes/base.html" %}
+{% block title %} Координаторы {% endblock %}
+{% block header %} Координаторы {% endblock %}
+{% block content %} 
+<div class="container">
+      {% include "includes/search.html" with view='coords' %}
+</div>
+<div class="container-fluid">
+ <div class="d-flex flex-row">
+  {% if page_obj.has_other_pages %}
+   <div class="p-2">
+    {% include "includes/paginator.html" with page=page_obj paginator=paginator%}
+   </div>
+  {% endif %}
+    <div class="p-2">
+      <button type="submit" class="btn btn-success" onclick="location.href='{% url 'new_coord' %}'">
+        Добавить координатор
+      </button>
+    </div>
+  </div>
+
+  <table class="table table-sm text-center table-bordered table-hover">
+    <thead class="table-dark align-middle">
+    <th class="p-2" nowrap="nowrap" scope="row"> Сеть </th>
+    <th class="p-2" nowrap="nowrap" scope="row"> Дата внедрения </th>
+    <th class="p-2" nowrap="nowrap" scope="row"> Узел </th>
+    <th class="p-2" scope="row"> Местоположение </th>
+    <th class="p-2" scope="row"> ID в сети </th>
+    <th class="p-2" > Модификация </th>
+    <th class="p-2" > Аппаратная платформа </th>
+    <th class="p-2" scope="row"> Серийный номер </th>
+    <th class="p-2" > У/Н СКЗИ </th>
+    <th class="p-2" > У/Н ФСТЭК </th>
+  </thead>
+    <tbody>
+    {% for coord in page %}
+      <tr>
+        <td>{{ coord.network }}</td>
+        <td>{{ coord.date| date:"d.m.Y" }}</td>
+        <td>
+          <a class="link-primary" href="{% url 'single_coord' coord.pk %}">
+            {{ coord.name }}
+          </a>
+        </td>
+        <td>{{ coord.address }}</td>
+        <td>{{ coord.vipnet_id }}</td>
+        <td>{{ coord.modification }}</td>
+        <td>{{ coord.hardware_platform }}</td>
+        <td>{{ coord.serial_number }}</td>
+        <td>{{ coord.account_number_skzi }}</td>
+        <td>{{ coord.account_number_fstec }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+    {% if page_obj.has_other_pages %}
+    {% include "includes/paginator.html" with page=page_obj paginator=paginator%}
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "includes/base.html" %}
+{% block title %}Главная страница {% endblock %}
+{% block header %} События {% endblock %}
+{% block content %} 
+<div class="container">
+  {% include "includes/search.html" with view='index' search_fields='ИНН, Организация, ID устройства'%}
+</div>
+<div class="container-fluid">
+  <div class="d-flex flex-row">
+  {% if page_obj.has_other_pages %}
+   <div class="p-2">
+    {% include "includes/paginator.html" with page=page_obj paginator=paginator%}
+   </div>
+  {% endif %}
+    <div class="p-2">
+      <button type="submit" class="btn btn-success" onclick="location.href='{% url 'new_org' %}'">
+        Добавить организацию
+      </button>
+    </div>
+  </div>
+  <table class="table table-sm text-center table-bordered table-hover">
+    <thead class="table-dark align-middle">
+      <th class="p-2" nowrap="nowrap" scope="row"> Рег № СКИ </th>
+      <th class="p-2" nowrap="nowrap" scope="row"> Дата СКИ </th>
+      <th class="p-2" nowrap="nowrap" scope="row"> VPN </th>
+      <th class="p-2" nowrap="nowrap" scope="row"> Устр-во </th>
+      <th class="p-2" nowrap="nowrap" scope="row"> ID устр-ва</th>
+      <th class="p-2" nowrap="nowrap" scope="row"> Акт </th>
+      <th class="p-2" nowrap="nowrap" scope="row"> Кол-во</th>
+      <th class="p-2" nowrap="nowrap" scope="row"> Инн </th>
+      <th class="p-2" nowrap="nowrap" scope="row"> Организация </th>
+      <th class="p-2" nowrap="nowrap" scope="row"> Рег № </th>
+      <th class="p-2" nowrap="nowrap" scope="row"> Дата Рег № </th>
+
+      <th class="p-2" scope="row"> Примечание </th>
+    </thead>
+    <tbody class="align-middle">
+    {% for vpn in page_obj %}
+      <tr>
+        <td> {{ vpn.reg_number }} </td>
+        <td> {{ vpn.reg_date | date:"d.m.Y" }} </td>
+        <td nowrap="nowrap"> VPN-{{ vpn.vpn_number }}</td>
+        <td nowrap="nowrap"> {{ vpn.device_type.type }}</td>
+        <td class="col-sm-1 text-truncate" style="max-width: 250px;">
+          {% if vpn.device_id %} {{ vpn.device_id }} {% endif %}
+        </td>
+        <td class="col-sm-1">
+          {% if vpn.license.act %}
+            <a href="{% url 'single_act' vpn.license.pk %}">{{ vpn.license.act }} </a>
+          {% endif %}
+        </td>
+        <td nowrap="nowrap">
+          {% if vpn.license.amount %} {{ vpn.license.amount }} шт. {% endif %}
+        </td>
+        <td> <a href="{% url 'single_org' vpn.organisation.pk %}">
+          {{ vpn.organisation.inn }} </a>
+        </td>
+        <td class="col-sm-3"> {{ vpn.organisation.short_name }} </td>
+        <td> {{ vpn.organisation.reg_number }} </td>
+        <td> {{ vpn.organisation.reg_date| date:"d.m.Y" }} </td>
+
+        <td> {% if vpn.comment %} {{ vpn.comment }} {% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+    {% if page_obj.has_other_pages %}
+    {% include "includes/paginator.html" with page=page_obj paginator=paginator%}
+    {% endif %}
+  </div>
+  
+{% endblock %}

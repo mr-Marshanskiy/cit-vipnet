@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'events',
     'pars',
     'api',
+    'inventory',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',

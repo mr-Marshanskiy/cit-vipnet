@@ -3,85 +3,60 @@
 
 {% block content %}
 
-<div class="text-left card">
-  <ul class="list-group list-group-flush">
+<div class="text-start container">
+  <ul class="list-group">
     <li class="list-group-item">
-      <button type="submit" class="btn btn-primary" onclick="location.href='{% url 'add_org' %}'" name='add_org'>
-        Добавить 
-      </button> 
-        Добавить организации
+      <a type="submit" class="btn-link" onclick="location.href='{% url 'add_org' %}'" name='add_org'>
+        Добавить организации</a>
       </li>
-    </ul>
       <li class="list-group-item" >
-        <button type="submit" class="btn btn-primary" onclick="location.href='{% url 'add_distr' %}'" name='add_distr'>
-          Добавить 
-        </button>
-        Добавить дистрибьюторов
+        <a type="submit" class="btn-link" onclick="location.href='{% url 'add_distr' %}'" name='add_distr'>
+          Добавить дистрибьюторов</a>
       </li>
       <li class="list-group-item">
-        <button type="submit" class="btn btn-primary" onclick="location.href='{% url 'add_lic' %}'" name='add_lic'>
-          Добавить 
-        </button>
-        Добавить лицензии
+        <a type="submit" class="btn-link" onclick="location.href='{% url 'add_lic' %}'" name='add_lic'>
+          Добавить лицензии</a>
       </li>
       <li class="list-group-item">
-        <button type="submit" class="btn btn-primary" onclick="location.href='{% url 'add_vpn' %}'" name='add_vpn'>
-          Добавить 
-        </button>
-        Добавить СКИ
+        <a type="submit" class="btn-link" onclick="location.href='{% url 'add_vpn' %}'" name='add_vpn'>
+          Добавить СКИ</a>
       </li>
       <li class="list-group-item">
-        <button type="submit" class="btn btn-primary" onclick="location.href='{% url 'add_devices' %}'" name='add_devices'>
-          Добавить 
-        </button>
-        Добавить Устройства
-      </li>
-
-      <li class="list-group-item">
-        <button type="submit" class="btn btn-primary" onclick="location.href='{% url 'del_all_vpn' %}'" name='del_all_vpn'>
-          Удалить 
-        </button>
-        Удалить СКИ
+        <a type="submit" class="btn-link" onclick="location.href='{% url 'add_devices' %}'" name='add_devices'>
+          Добавить Устройства</a>
       </li>
       <li class="list-group-item">
-        <button type="submit" class="btn btn-primary" onclick="location.href='{% url 'del_all_act' %}'" name='del_all_act'>
-          Удалить 
-        </button>
-        Удалить Акты
-      </li>
-
-      <li class="list-group-item">
-        <button type="submit" class="btn btn-primary" onclick="location.href='{% url 'change_short_name' %}'" name='change_short_name'>
-          Заменить 
-        </button>
-        Сократить короткое название
+        <a type="submit" class="btn-link" onclick="location.href='{% url 'del_all_vpn' %}'" name='del_all_vpn'>
+          Удалить СКИ</a>
       </li>
       <li class="list-group-item">
-        <button type="submit" class="btn btn-primary" onclick="location.href='{% url 'change_lics' %}'" name='change_lics'>
-          Заменить 
-        </button>
-        Заменить названия в актах
+       <a type="submit" class="btn-link" onclick="location.href='{% url 'del_all_act' %}'" name='del_all_act'>
+          Удалить Акты</a>
       </li>
-
       <li class="list-group-item">
-        <button type="submit" class="btn btn-primary" onclick="location.href='{% url 'unmerge_with_filling' %}'" name='unmerge_with_filling'>
-          Заполнить 
-        </button>
-        Заполнить пустые ячейки в таблице
+       <a type="submit" class="btn-link" onclick="location.href='{% url 'change_short_name' %}'" name='change_short_name'>
+          Сократить короткое название</a>
       </li>
-
+      <li class="list-group-item">
+        <a type="submit" class="btn-link" onclick="location.href='{% url 'change_lics' %}'" name='change_lics'>
+          Заменить названия в актах</a>
+      </li>
+      <li class="list-group-item">
+        <a type="submit" class="btn-link" onclick="location.href='{% url 'unmerge_with_filling' %}'" name='unmerge_with_filling'>
+           Заполнить пустые ячейки в таблице</a>
+      </li>
       <li class="list-group-item">
         <button type="submit" class="btn btn-primary" onclick="location.href='{% url 'move_device' %}'" name='unmerge_with_filling'>
           Выбрать 
         </button>
-        Произвести слияние Актов
+        Произвести слияние носителей
       </li>
       {% if form %}
 
       <form method="post" enctype="form-data">
       {% csrf_token %}
-        Старый Акт {{ form.old_type }}
-        Новый Акт {{ form.new_type }}
+        Старый носитель {{ form.old_type }}
+        Новый носитель {{ form.new_type }}
       <button type="submit" href="{% url 'move_device' %}" class="move_device">
         Заменить
       </button>

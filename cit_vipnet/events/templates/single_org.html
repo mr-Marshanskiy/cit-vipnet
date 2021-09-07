@@ -1,0 +1,143 @@
+{% extends "includes/base.html" %}
+{% block title %}Организация {% endblock %}
+<h1>{% block header %}{% endblock %}</h1>
+{% block content %} 
+<style>
+.td-width {
+  max-width: 500px;
+  overflow-wrap: break-word;
+}
+.icon-delete {
+    display: block;
+    position: relative;
+    width: 24px;
+    height: 24px;
+    background-image: url("/static/images/delete.svg");
+    background-size: 100%;
+    background-color: transparent;
+    border: none;
+    outline: none;
+}
+.icon-edit {
+    display: block;
+    position: relative;
+    width: 24px;
+    height: 24px;
+    background-image: url("/static/images/edit.png");
+    background-size: 100%;
+    background-color: transparent;
+    border: none;
+    outline: none;
+}
+
+</style>
+<div class="container" >
+    <div class="container col-12  text-center">
+      <h2 class="fw-bold">{{ org.short_name }}</h2>
+      <h5 class="lead">{{ org.full_name }}</h5>
+    <div class="row flex-lg-row-reverse align-items-center py-3">
+
+      <div class="col-6 text-start px-5">
+        <p class=" mb-1"><b class="fw-bold">КПП:</b></b> {{ org.kpp }}</p>
+        <p class=" mb-1"><b class="fw-bold">Населенный пункт:</b> {{ org.town }}</p>
+        <p class=" mb-1"><b class="fw-bold">Адрес:</b> {{ org.address }}</p>
+        <p class=" mb-1"><b class="fw-bold">ФИО ответственного:</b> {{ org.employee }}
+        <p class=" mb-1"><b class="fw-bold">Телефон:</b> {{ org.phone }}</p>
+        <div class="pb-3">
+          <a class="link-primary" href="{% url 'update_org' org.pk %}">
+             Изменить организацию </a>
+        </div>
+
+        <div>
+          <a class="link-danger" href="{% url 'delete_org' org.pk %}">
+             Удалить все сведения об организации </a>
+        </div>
+
+      </div>
+
+      <div class="col-6 text-end px-5 border-end">
+      <h1 class="display-5 fw-bold"> <b class="lead">ИНН</b> {{ org.inn }}</h1>
+        <p class="lead mb-2">Регистрационный № <b class="fw-bold">
+          {{ org.reg_number }}</b> от <b class="fw-bold">{{ org.reg_date}}</b></p>
+
+        {% if org.comment %}
+          <hr>
+          <p class="lead mb-2"> {{ org.comment }}</p>
+        {% endif %}
+
+      </div>
+    </div>
+      <hr>
+  </div>
+<div class="container-fluid" >
+  <div class="row justify-content-md-center">
+    <div class="col col-lg-2">
+      <button type="submit" class="btn btn-success" onclick="location.href='{% url 'new_vpn' org.pk %}'">
+        Добавить VPN
+      </button>
+    </div>
+  </div>
+</div>
+    <hr>
+</div>
+
+<div class="container-fluid">
+  <table class=" table table-sm text-center table-bordered table-hover">
+    <thead class="table-dark align-middle">
+      <th class="p-2"> Сеть </th>
+      <th class="p-2"> VPN </th>
+      <th class="p-2" nowrap="nowrap"> Рег № </th>
+      <th class="p-2"> Дата СКИ </th>
+      <th class="p-2"> Активный </th>
+      <th class="p-2"> Носитель </th>
+      <th class="p-2"> ID носителя </th>
+      <th class="p-2"> Акт П/П</th>
+      <th class="p-2"> Комментарий </th>
+      <th class="p-2"> Действие </th>
+    </thead>
+    <tbody class="align-middle">
+    {% for key in vpn %}
+    <tr>
+      <td> {{ key.network }} </td>
+      <td nowrap="nowrap"> VPN-{{ key.vpn_number }} </td>
+      <td> {{ key.reg_number }} </td>
+      <td> {{ key.reg_date | date:"d.m.Y" }} </td>
+      <td> {{ key.active | yesno:"Да,-"}} </td>
+      <td>
+        {% if key.license %}
+          <a href="{% url 'single_device' key.device_type.id %}"> {{ key.device_type.type }} </a>
+        {% endif %}
+      </td>
+      <td class="td-width"> {{ key.device_id}} </td>
+      <td>
+        {% if key.license %}
+          <a href="{% url 'single_act' key.license.id %}">{{ key.license.act }}</a>
+          от {{ key.license.date | date:"d.m.Y" }}
+          {% if key.license.amount %} на {{ key.license.amount }} шт.{% endif %}
+          {% if key.license.distributor %}
+            (<a href="{% url 'single_seller' key.license.distributor.id %}">{{ key.license.distributor.name }}</a>)
+          {% endif %}
+          {% endif %}
+
+      </td>
+      <td> {% if key.comment %} {{ key.comment }} {% endif %}</td>
+      <td>
+        <div class="d-flex justify-content-center">
+
+            <a class="link-primary me-2" href="{% url 'update_vpn' key.pk %}">
+              <span class="icon-edit"></span>
+            </a>
+
+
+            <a class="link-danger" href="{% url 'delete_vpn_of_org' key.pk %}">
+              <span class="icon-delete"></span>
+            </a>
+
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %} 

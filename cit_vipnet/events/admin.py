@@ -9,3 +9,11 @@ for model in models:
         admin.site.register(model)
     except AlreadyRegistered:
         pass
+
+models = apps.get_app_config('inventory').get_models()
+
+for model in models:
+    try:
+        admin.site.register(model)
+    except AlreadyRegistered:
+        pass

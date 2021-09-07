@@ -42,3 +42,4 @@ class LicenseViewSet(ListModelMixin, GenericViewSet):
     serializer_class = LicenseSerializer
     filter_backends = (SearchFilter, )
     search_fields = ('act',)
+

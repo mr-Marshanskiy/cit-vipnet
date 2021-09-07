@@ -1,0 +1,54 @@
+{% extends "includes/base.html" %}
+{% block title %}Устройства{% endblock %}
+{% block header %} Ключевые носители{% endblock %}
+{% block content %}
+{% load form_filters %}
+<div class="p-4 container">
+  <div class="row justify-content-around">
+    <div class="col-4">
+      <table class=" table table-sm text-center table-bordered table-hover">
+        <thead class="table-dark align-middle">
+          <th class="p-2"> Тип устройства </th>
+          <th class="p-2"> Количество СКИ </th>
+        </thead>
+        <tbody>
+        {% for device in page %}
+          <tr>
+            <td>
+              <a href="{% url 'single_device' device.id %}"> {{ device.type }} </a>
+            </td>
+            <td>{{ device.device_count }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col-4">
+      <form method="post">
+      {% csrf_token %}
+      <div class="form-group text-left">
+        <h5> Добавить новый тип</h5>
+        <label>Название ключевого носителя</label>
+          {{ form.type |addclass:"form-control" }}
+      </div>
+        <div class="p-3">
+          <button class="btn btn-primary" type="submit">Добавить</button>
+        </div>
+      </form>
+      <hr>
+      <h5> Перейти к удалению записей </h5>
+      <small class="text-muted"> Будьте внимательны с процедурой удаления. </br>
+                                 Потерянные данные будет невозможно восстановить! </small>
+      </br>
+      <div class="p-3">
+        <button type="submit" class="btn btn-warning" name='del_devices'
+                onclick="location.href='{% url 'deleting_list_devices' %}'">
+          Перейти к удалению
+        </button>
+      </div>
+      <hr>
+    </div>
+  </div>
+</div>
+{% endblock %}

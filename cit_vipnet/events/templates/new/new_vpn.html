@@ -1,0 +1,131 @@
+{% extends "includes/base.html" %}
+{% block title %}СКИ{% endblock %}
+{% block header%}Справочно-ключевая информация{% endblock %}
+{% block content %}
+{% load form_filters %}
+{% load static %}
+<div class="container text-center d-flex justify-content-center pt-2">
+  <div class="row col-8 border m-0">
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="card-header mb-2">
+          <h5 class=" fw-bold lead"> Заполните данные СКИ </h5>
+        </div>
+        <table class="d-flex justify-content-center">
+          <tr >
+            <td class="text-start">
+              <p class="col-form-label lead fw-bold">{{ form.network.label }}</p>
+            </td>
+            <td class="p-1">
+              {{ form.network |addclass:"form-control form-control-sm text-center" }}
+            </td>
+          </tr>
+          <tr>
+            <td class="text-start">
+              <p class="col-form-label lead fw-bold">{{ form.reg_number.label }}</p>
+            </td>
+            <td class="p-1">
+              {{ form.reg_number |addclass:"form-control form-control-sm text-center" }}
+            </td>
+          </tr>
+          <tr>
+            <td class="text-start">
+              <p class="col-form-label lead fw-bold">{{ form.reg_date.label }}</p>
+            </td>
+            <td class="p-1">
+              {{ form.reg_date |addclass:"form-control form-control-sm text-center" }}
+            </td>
+          </tr>
+          <tr>
+            <td class="text-start">
+              <p class="col-form-label lead fw-bold">{{ form.vpn_number.label }}</p>
+            </td>
+            <td class="p-1">
+              {{ form.vpn_number |addclass:"form-control form-control-sm text-center" }}
+            </td>
+          </tr>
+          <tr>
+            <td class="text-start">
+              <p class="col-form-label lead fw-bold">{{ form.device_type.label }}</p>
+            </td>
+            <td class="p-1">
+              {{ form.device_type |addclass:"form-control form-control-sm text-center" }}
+            </td>
+          </tr>
+          <tr>
+            <td class="text-start">
+              <p class="col-form-label lead fw-bold">{{ form.device_id.label }}</p>
+            </td>
+            <td class="p-1">
+              {{ form.device_id |addclass:"form-control form-control-sm text-center" }}
+            </td>
+          </tr>
+          <tr>
+            <td class="text-start">
+              <p class="col-form-label lead fw-bold">{{ form.license_act.label }}</p>
+            </td>
+            <td class="p-1">
+              <div class="form__field-group">
+                <div class="form__field-group-ingredientes">
+                  <div class="form__dropdown">
+                    {{ form.license_act |addclass:"form-control form-control-sm text-center" }}
+                    <ul class="form__dropdown-items dropdown-menu"></ul>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-start">
+              <p class="col-form-label lead fw-bold">{{ form.license_date.label }}</p>
+            </td>
+            <td class="p-1">
+              {{ form.license_date |addclass:"form-control form-control-sm text-center" }}
+            </td>
+          </tr>
+          <tr>
+            <td class="text-start">
+              <p class="col-form-label lead fw-bold">{{ form.license_amount.label }}</p>
+            </td>
+            <td class="p-1">
+              {{ form.license_amount |addclass:"form-control form-control-sm text-center" }}
+            </td>
+          </tr>
+          <tr>
+            <td class="text-start">
+              <p class="col-form-label lead fw-bold">{{ form.license_distributor.label }}</p>
+            </td>
+            <td class="p-1">
+              {{ form.license_distributor |addclass:"text-center form-control form-control-sm" }}
+            </td>
+          </tr>
+          </tr>
+          <tr>
+            <td class="text-start">
+              <p class="col-form-label lead fw-bold">{{ form.comment.label }}</p>
+            </td>
+            <td class="p-1">
+              {{ form.comment |addclass:"text-center form-control" }}
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td class="p-1">
+              <button type="submit" class="btn btn-primary">
+              Сохранить данные
+              </button>
+            </td>
+          </tr>
+        </table>
+      </form>
+      {% for err in form.errors %}
+      {{ err }}
+      {% endfor %}
+    </div>
+</div>
+<script src={% static "./js/config/config.js" %}></script>
+<script src={% static "./js/utils/debouncing.js" %}></script>
+<script src={% static "./js/api/Api.js" %}></script>
+<script src={% static "formVpn.js" %}></script>
+{% endblock %}

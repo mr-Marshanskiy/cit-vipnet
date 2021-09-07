@@ -1,0 +1,39 @@
+{% extends "includes/base.html" %}
+{% block title %}Дистрибьютор {% endblock %}
+<h1>{% block header %}{% endblock %}</h1>
+{% block content %} 
+
+<div class="container" >
+    <div class="container col-7  text-center">
+      <h2 class="fw-bold">{{ seller.name }}</h2>
+      {% if seller.address %} <h5 class="lead">{{ seller.address }}</h5> {% endif %}
+      <hr>
+      <h5 class="lead fw-bold">Акты, выданные дистрибьютором. Итого: {{ lics.count }}</h5>
+    </div>
+    <div class="container p-2">
+      {% include "includes/search.html" with view='orgs' %}
+    </div>
+  <div class="row justify-content-around">
+    <div class="col-7">
+      <table class=" table table-sm text-center table-bordered table-hover">
+        <thead class="table-dark">
+          <th> № Акта </th>
+          <th> Дата акта </th>
+          <th> Количество </th>     
+        </thead>
+        <tbody>
+        {% for key in lics %}
+        <tr>
+          <td>
+            <a href="{% url 'single_act' key.id %}"> {{key.act  }}  </a>
+          </td>
+          <td> {{ key.date }} </td>
+          <td> {{ key.amount }} шт.</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %} 

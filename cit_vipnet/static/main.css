@@ -1,0 +1,7 @@
+select{
+    text-align-last:center;
+}
+
+nav.navbar .dropdown:hover > .dropdown-menu {
+ display: block;
+}

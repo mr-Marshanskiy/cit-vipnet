@@ -109,19 +109,25 @@ class OrganisationDeleteView(DeleteView):
 
 
 class OrganisationCreateView(CreateView):
+
     form_class = OrganisationForm
     template_name = 'new/new_org.html'
 
-    today = datetime.date.today()
-    last_reg_n = Organisation.objects.first()
-    try:
-        last_reg_n.reg_number = str(int(last_reg_n.reg_number) + 1)
-    except:
-        pass
-    initial = {
-        'reg_number': last_reg_n.reg_number,
-        'reg_date': today,
-    }
+    def get_initial(self):
+        today = datetime.date.today()
+        last_reg_n = Organisation.objects.first()
+        try:
+            last_reg_n.reg_number = str(int(last_reg_n.reg_number) + 1)
+        except:
+            pass
+        self.initial = {
+            'reg_number': last_reg_n.reg_number,
+            'reg_date': today,
+        }
+        init = super(OrganisationCreateView, self).get_initial()
+        return init
+
+
 
     def get_success_url(self):
         return reverse_lazy('single_org', kwargs={'pk': self.object.pk})
@@ -286,7 +292,7 @@ class LicenseSingleView(SingleObjectMixin, ListView):
 
 class LicenseSingleDeleteView(DeleteView):
     model = License
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('acts')
     template_name = 'confirm_deleting.html'
 
 
@@ -312,7 +318,6 @@ class VpnCreateView(CreateView):
         last_reg_n = Vpn.objects.all().order_by('-reg_date', '-reg_number').first()
         try:
             last_reg_n.reg_number = str(int(last_reg_n.reg_number) + 1)
-            print((last_reg_n.reg_number))
         except:
             pass
         try:
@@ -358,6 +363,7 @@ class VpnCreateView(CreateView):
         lic, created = License.objects.get_or_create(
             act=lic_act, date=date_clean, distributor=lic_distr, amount=lic_amount)
         form.instance.license = lic
+        form.save()
         return super(VpnCreateView, self).form_valid(form)
 
 
@@ -387,6 +393,7 @@ class VpnUpdateView(UpdateView):
         self.initial = {}
         try:
             self.initial['license_act'] = self.object.license.act
+            print(self.object.license.act)
         except:
             self.initial['license_act'] = ''
         try:

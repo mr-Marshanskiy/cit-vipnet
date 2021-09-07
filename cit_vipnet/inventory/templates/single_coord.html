@@ -1,0 +1,50 @@
+{% extends "includes/base.html" %}
+{% block title %}Координатор {% endblock %}
+<h1>{% block header %}{% endblock %}</h1>
+{% block content %} 
+<style>
+.td-width {
+  max-width: 500px;
+  overflow-wrap: break-word;
+}
+</style>
+<div class="container" >
+    <div class="container col-12  text-center">
+      <h2 class="fw-bold">{{ coord.name }}</h2>
+      <h5 class="lead">{{ coord.address }}</h5>
+    <div class="row flex-lg-row-reverse align-items-center py-3">
+
+      <div class="col-6 text-start px-5">
+        <p class=" mb-1"><b class="fw-bold">Модификация:</b></b> {{ coord.modification }}</p>
+        <p class=" mb-1"><b class="fw-bold">Аппаратная платформа:</b> {{ coord.hardware_platform }}</p>
+        <p class=" mb-1"><b class="fw-bold">Серийный номер:</b> {{ coord.serial_number }}</p>
+        <p class=" mb-1"><b class="fw-bold">У/Н СКЗИ:</b> {{ coord.account_number_skzi }}
+        <p class=" mb-1"><b class="fw-bold">У/Н ФСТЭК:</b> {{ coord.account_number_fstec }}</p>
+        <div class="pb-3">
+          <a class="link-primary" href="{% url 'update_coord' coord.pk %}">
+             Изменить координатор </a>
+        </div>
+        <div>
+          <a class="link-danger" href="{% url 'delete_coord' coord.pk %}">
+             Удалить все сведения о координаторе </a>
+        </div>
+
+      </div>
+
+      <div class="col-6 text-end px-5 border-end">
+      <h1 class="display-5 fw-bold"> <b class="lead">Сеть</b> {{ coord.network }}</h1>
+        <p class="lead mb-2">ID: <b class="fw-bold">{{ coord.vipnet_id }}</b></p>
+
+        {% if org.comment %}
+          <hr>
+          <p class="lead mb-2"> {{ org.comment }}</p>
+        {% endif %}
+
+      </div>
+    </div>
+      <hr>
+  </div>
+
+</div>
+
+{% endblock %} 

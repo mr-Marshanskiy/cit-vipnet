@@ -1,0 +1,40 @@
+{% extends "includes/base.html" %}
+{% block title %}
+Организация
+{% endblock %}
+{% block header%}Координатор{% endblock %}
+{% block content %}
+{% load form_filters %}
+<div class="container text-center d-flex justify-content-center pt-2">
+  <div class="row col-8 border m-0">
+    <div class="">
+      <form method="post">
+      {% csrf_token %}
+      <div class="card-header mb-2">
+        <h5 class=" fw-bold lead"> Заполните данные о Координаторе </h5>
+      </div>
+        {% for field in form %}
+        <div class="row">
+          <div class="col text-start">
+            <p class="col-form-label lead fw-bold">{{ field.label }}</p>
+          </div>
+           <div class="col-7 text-start">
+                {{ field |addclass:"form-control form-control-sm text-wrap" }}
+          </div>
+        </div>
+        {% endfor %}
+            <div class="d-flex justify-content-center p-2">
+
+                 <button type="submit" class="btn btn-primary">
+                    Сохранить данные
+                 </button>
+            </div>
+    </form>
+      {% for err in form.errors %}
+      {{ err }}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}

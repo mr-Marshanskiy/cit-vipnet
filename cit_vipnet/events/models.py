@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
-SIMPLE_AUTOCOMPLETE = {'events.organisation': {'search_field': 'inn'}}
 
 class Distributor(models.Model):
     name = models.CharField(
@@ -190,7 +189,7 @@ class Vpn(models.Model):
         blank=True,
         null=True,
         max_length=30,
-        verbose_name=u'Идентификатор устройства',)
+        verbose_name=u'ID устройства',)
     license = models.ForeignKey(
         'License',
         on_delete=models.SET_NULL,
